@@ -32,10 +32,10 @@ jobs:
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
 
-      - name: Create Release Tag
+      - name: Push Tag
         if: github.event_name == 'push'
-        run: |
-          git tag ${{ steps.version.outputs.version_tag }}
-          git push origin --tags
         env:
           GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
+        run: |
+          git tag ${{ steps.version.outputs.version_tag }}
+          git push https://$GITHUB_ACTOR:${{ secrets.ACTIONS_TOKEN }}@github.com/${{ github.repository }} --tags
