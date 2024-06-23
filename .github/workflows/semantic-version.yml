@@ -27,8 +27,15 @@ jobs:
           version_format: "${major}.${minor}.${patch}-prerelease${increment}"
           enable_prerelease_mode: true
 
+      - name: Set up Git
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+
       - name: Create Release Tag
         if: github.event_name == 'push'
         run: |
           git tag ${{ steps.version.outputs.version_tag }}
           git push origin --tags
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
