@@ -2,7 +2,6 @@ import unittest
 from unittest.mock import MagicMock
 from hubitat_lock_manager.models import CreateKeyCodeParams, UpdateKeyCodeParams, DeleteKeyCodeParams, ReadKeyCodeParams
 from hubitat_lock_manager.smart_lock import create_yale_assure_lever
-from hubitat_lock_manager.datastore import DataStore
 from hubitat_lock_manager.batch_job import init_batch_job, run_batch_job, hash_request
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.remote.webdriver import WebDriver
