@@ -1,11 +1,13 @@
 import unittest
 from unittest.mock import patch, MagicMock
 from hubitat_lock_manager.controller import SmartLockController
+from hubitat_lock_manager.factory import SmartLockFactory
 from hubitat_lock_manager.models import CreateKeyCodeParams, UpdateKeyCodeParams, DeleteKeyCodeParams, CreateKeyCodeResult, UpdateKeyCodeResult, DeleteKeyCodeResult, ListKeyCodesResult
 
 class TestSmartLockController(unittest.TestCase):
     def setUp(self):
-        self.controller = SmartLockController()
+        self.factory = SmartLockFactory.TEST
+        self.controller = SmartLockController(self.factory)
         self.driver_patch = patch('hubitat_lock_manager.controller.webdriver.Chrome')
         self.driver_mock = self.driver_patch.start()
 
