@@ -5,9 +5,14 @@ from hubitat_lock_manager.models import CreateKeyCodeParams, UpdateKeyCodeParams
 class HubitatManager:
     driver: WebDriver
     smart_lock: SmartLock
-    lock_id: str
+    url: str
+    username: str = ""
+    password: str = ""
+    
+    def login(self):
+        if not self.username and self.password:
+            return
 
-    def login(self, url: str, username: str, password: str):
         # Selenium logic for logging into Hubitat
         pass
 
@@ -25,3 +30,10 @@ class HubitatManager:
 
     def close(self):
         self.driver.quit()
+
+    def __enter__(self):
+        self.login()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
