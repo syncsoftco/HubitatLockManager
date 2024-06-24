@@ -6,7 +6,7 @@ from hubitat_lock_manager.models import CreateKeyCodeParams, UpdateKeyCodeParams
 
 class TestSmartLockController(unittest.TestCase):
     def setUp(self):
-        self.factory = SmartLockFactory.TEST
+        self.factory = SmartLockFactory.TEST_FACTORY
         self.controller = SmartLockController(self.factory)
         self.driver_patch = patch('hubitat_lock_manager.controller.webdriver.Chrome')
         self.driver_mock = self.driver_patch.start()
