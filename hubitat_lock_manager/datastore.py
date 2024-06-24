@@ -30,3 +30,29 @@ class DataStore:
         # SQL logic to delete key code
         cursor.close()
         return True
+
+    def get_pending_key_codes(self):
+        cursor = self.connection.cursor(dictionary=True)
+        query = "SELECT * FROM key_codes WHERE status = 'pending' ORDER BY timestamp"
+        cursor.execute(query)
+        results = cursor.fetchall()
+        cursor.close()
+        return results
+
+    def is_request_processed(self, request_hash: str) -> bool:
+        cursor = self.connection.cursor()
+        query = "SELECT COUNT(*) FROM key_code_results WHERE request_hash = %s"
+        cursor.execute(query, (request_hash,))
+        result = cursor.fetchone()
+        cursor.close()
+        return result[0] > 0
+
+    def record_key_code_result(self, lock_id: str, code: str, name: str, success: bool, message: str, request_hash: str):
+        cursor = self.connection.cursor()
+        query = """
+            INSERT INTO key_code_results (lock_id, code, name, success, message, request_hash, timestamp)
+            VALUES (%s, %s, %s, %s, %s, %s, NOW())
+        """
+        cursor.execute(query, (lock_id, code, name, success, message, request_hash))
+        self.connection.commit()
+        cursor.close()
