@@ -1,16 +1,16 @@
 import time
+from dataclasses import dataclass
 from .hubitat_manager import HubitatManager
 from .factory import create_yale_assure_lever
 from distributed.queue_manager import QueueManager
 from distributed.datastore import DataStore
+from selenium import webdriver
 
+@dataclass(frozen=True)
 class BatchJob:
-    def __init__(self, driver_path, hubitat_url, username, password):
-        smart_lock = create_yale_assure_lever(driver_path)
-        self.manager = HubitatManager(driver_path, smart_lock)
-        self.manager.login(hubitat_url, username, password)
-        self.queue = QueueManager()
-        self.datastore = DataStore()
+    manager: HubitatManager
+    queue: QueueManager
+    datastore: DataStore
 
     def run(self):
         while True:
@@ -22,3 +22,13 @@ class BatchJob:
 
     def stop(self):
         self.manager.close()
+
+# Function to initialize BatchJob with dependencies
+def init_batch_job(driver_path, hubitat_url, username):
+    driver = webdriver.Chrome(executable_path=driver_path)
+    smart_lock = create_yale_assure_lever(driver)
+    manager = HubitatManager(driver, smart_lock)
+    manager.login(hubitat_url, username)
+    queue = QueueManager()
+    datastore = DataStore()
+    return BatchJob(manager, queue, datastore)
