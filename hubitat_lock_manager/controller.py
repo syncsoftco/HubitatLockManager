@@ -1,10 +1,11 @@
 from hubitat_lock_manager.hubitat_manager import HubitatManager
 from hubitat_lock_manager.models import CreateKeyCodeParams, UpdateKeyCodeParams, DeleteKeyCodeParams
 from selenium import webdriver
-from hubitat_lock_manager.smart_lock import create_yale_assure_lever
+from hubitat_lock_manager.factory import SmartLockFactory
 
 class SmartLockController:
     driver_path: str # path/to/chromedriver
+    smart_lock: SmartLock
 
     def create_key_code(self, params: CreateKeyCodeParams):
         driver = webdriver.Chrome(executable_path=self.driver_path)
