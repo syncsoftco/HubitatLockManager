@@ -37,7 +37,7 @@ jobs:
           version_format: "${major}.${minor}.${patch}-prerelease${increment}"
           enable_prerelease_mode: true
 
-      - name: Update Version in Files
+      - name: Update Version in version.py
         run: python update_version.py ${{ steps.version.outputs.version_tag }}
 
       - name: Set up Git
@@ -47,12 +47,11 @@ jobs:
 
       - name: Commit Changes
         run: |
-          git add hubitat_lock_manager/version.py setup.py
+          git add hubitat_lock_manager/version.py
           git commit -m "chore: update version to ${{ steps.version.outputs.version_tag }}"
           git push origin main
 
       - name: Push Tag
-        if: github.event_name == 'push'
         env:
           GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
         run: |
