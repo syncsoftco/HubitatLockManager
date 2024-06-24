@@ -14,7 +14,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setup(
     name='hubitat_lock_manager',
-    version=read_version(),
+    version='v0.0.5-1-g119764b',
     packages=find_packages(),
     install_requires=[
         'flask',
