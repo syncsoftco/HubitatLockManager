@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from selenium.webdriver.remote.webdriver import WebDriver
 from hubitat_lock_manager.models import CreateKeyCodeParams, UpdateKeyCodeParams, DeleteKeyCodeParams, SmartLock
 
