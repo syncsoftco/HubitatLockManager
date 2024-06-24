@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, List
 
 @dataclass(frozen=True)
 class CreateKeyCodeParams:
@@ -45,8 +45,13 @@ class ReadKeyCodeResult:
     name: str
 
 @dataclass(frozen=True)
+class ListKeyCodesResult:
+    key_codes: List[ReadKeyCodeResult]
+
+@dataclass(frozen=True)
 class SmartLock:
     create_key_code: Callable[[CreateKeyCodeParams], CreateKeyCodeResult]
     update_key_code: Callable[[UpdateKeyCodeParams], UpdateKeyCodeResult]
     delete_key_code: Callable[[DeleteKeyCodeParams], DeleteKeyCodeResult]
     read_key_code: Callable[[ReadKeyCodeParams], ReadKeyCodeResult]
+    list_key_codes: Callable[[], ListKeyCodesResult]
