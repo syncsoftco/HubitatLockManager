@@ -5,7 +5,7 @@ from hubitat_lock_manager.models import CreateKeyCodeParams, UpdateKeyCodeParams
 class HubitatManager:
     driver: WebDriver
     smart_lock: SmartLock
-    
+
     def login(self):
         # Selenium logic for logging into Hubitat
         pass
