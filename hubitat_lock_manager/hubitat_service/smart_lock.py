@@ -44,7 +44,7 @@ class ReadKeyCodeResult:
     code: str
     name: str
 
-@dataclass
+@dataclass(frozen=True)
 class SmartLock:
     create_key_code: Callable[[CreateKeyCodeParams], CreateKeyCodeResult]
     update_key_code: Callable[[UpdateKeyCodeParams], UpdateKeyCodeResult]
