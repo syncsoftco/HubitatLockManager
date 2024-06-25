@@ -1,15 +1,18 @@
 from dataclasses import dataclass, field
 from typing import List, Callable
 
+
 @dataclass(frozen=True)
 class CreateKeyCodeParams:
     code: str
     name: str
 
+
 @dataclass(frozen=True)
 class CreateKeyCodeResult:
     success: bool
     message: str
+
 
 @dataclass(frozen=True)
 class UpdateKeyCodeParams:
@@ -17,23 +20,28 @@ class UpdateKeyCodeParams:
     new_code: str
     new_name: str
 
+
 @dataclass(frozen=True)
 class UpdateKeyCodeResult:
     success: bool
     message: str
 
+
 @dataclass(frozen=True)
 class DeleteKeyCodeParams:
     code: str
+
 
 @dataclass(frozen=True)
 class DeleteKeyCodeResult:
     success: bool
     message: str
 
+
 @dataclass(frozen=True)
 class ListKeyCodesResult:
     codes: List[CreateKeyCodeParams]
+
 
 @dataclass(frozen=True)
 class SmartLock:

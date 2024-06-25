@@ -1,13 +1,26 @@
 from selenium.webdriver.remote.webdriver import WebDriver
 from hubitat_lock_manager.models import (
-    CreateKeyCodeParams, CreateKeyCodeResult, UpdateKeyCodeParams, UpdateKeyCodeResult, 
-    DeleteKeyCodeParams, DeleteKeyCodeResult, ListKeyCodesResult, SmartLock
+    CreateKeyCodeParams,
+    CreateKeyCodeResult,
+    UpdateKeyCodeParams,
+    UpdateKeyCodeResult,
+    DeleteKeyCodeParams,
+    DeleteKeyCodeResult,
+    ListKeyCodesResult,
+    SmartLock,
 )
 
 from hubitat_lock_manager.models import (
-    CreateKeyCodeParams, CreateKeyCodeResult, UpdateKeyCodeParams, UpdateKeyCodeResult, 
-    DeleteKeyCodeParams, DeleteKeyCodeResult, ListKeyCodesResult, SmartLock
+    CreateKeyCodeParams,
+    CreateKeyCodeResult,
+    UpdateKeyCodeParams,
+    UpdateKeyCodeResult,
+    DeleteKeyCodeParams,
+    DeleteKeyCodeResult,
+    ListKeyCodesResult,
+    SmartLock,
 )
+
 
 def create_test_lock(driver: WebDriver) -> SmartLock:
     def create_key_code(params: CreateKeyCodeParams) -> CreateKeyCodeResult:
@@ -27,8 +40,9 @@ def create_test_lock(driver: WebDriver) -> SmartLock:
         create_key_code=create_key_code,
         update_key_code=update_key_code,
         delete_key_code=delete_key_code,
-        list_key_codes=list_key_codes
+        list_key_codes=list_key_codes,
     )
+
 
 def create_yale_assure_lever(driver: WebDriver) -> SmartLock:
     def create_key_code(params: CreateKeyCodeParams) -> CreateKeyCodeResult:
@@ -52,5 +66,5 @@ def create_yale_assure_lever(driver: WebDriver) -> SmartLock:
         create_key_code=create_key_code,
         update_key_code=update_key_code,
         delete_key_code=delete_key_code,
-        list_key_codes=list_key_codes
+        list_key_codes=list_key_codes,
     )

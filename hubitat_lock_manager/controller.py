@@ -4,7 +4,12 @@ from selenium import webdriver
 
 from hubitat_lock_manager.factory import SmartLockFactory
 from hubitat_lock_manager.hubitat_manager import HubitatManager
-from hubitat_lock_manager.models import CreateKeyCodeParams, UpdateKeyCodeParams, DeleteKeyCodeParams
+from hubitat_lock_manager.models import (
+    CreateKeyCodeParams,
+    UpdateKeyCodeParams,
+    DeleteKeyCodeParams,
+)
+
 
 @dataclass(frozen=True)
 class SmartLockController:
