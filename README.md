@@ -15,11 +15,11 @@
  ```python
  from hubitat_lock_manager.hubitat_service import HubitatManager, HubitatLockHelper
 
- helper = HubitatLockHelper(driver_path='path_to_chromedriver')
- manager = HubitatManager(driver_path='path_to_chromedriver', helper=helper)
+helper = HubitatLockHelper(driver_path='path_to_chromedriver')
+manager = HubitatManager(driver_path='path_to_chromedriver', helper=helper)
 
- # Example usage
- manager.create_key_code(lock_id='lock1', code='1234', name='Guest')
+# Example usage
+manager.create_key_code(,,
  ```
 
  ## License

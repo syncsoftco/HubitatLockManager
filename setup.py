@@ -17,11 +17,7 @@ setup(
     name="hubitat_lock_manager",
     version=read_version(),
     packages=find_packages(),
-    install_requires=[
-        "flask",
-        "selenium",
-        "tailscale",
-    ],
+    install_requires=["requests", "selenium"],
     entry_points={
         "console_scripts": [
             "hubitat-lock-manager=hubitat_lock_manager.main:main",
