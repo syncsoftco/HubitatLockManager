@@ -67,6 +67,15 @@ def main():
     """
     st.title("Smart Lock Management")
 
+    # List Devices to populate dropdowns
+    devices_response = list_devices()
+    if devices_response.status_code != 200:
+        st.error(f"Error fetching devices: {devices_response.json().get('error')}")
+        return
+
+    devices = devices_response.json()["devices"]
+    device_options = {device["name"]: device["id"] for device in devices}
+
     # Create Key Code Section
     st.header("Create Key Code")
     with st.form("create_key_code_form"):
@@ -74,15 +83,14 @@ def main():
             "Username", help="Enter the username for the key code."
         )
         code = st.text_input("Code (8 digits)", help="Enter an 8-digit code.")
-        device_id = st.number_input(
-            "Device ID (optional)",
-            min_value=-1,
-            step=1,
-            value=-1,
-            help="Enter the device ID if applicable. Leave as -1 if not.",
+        device_name = st.selectbox(
+            "Select Device",
+            options=["All Devices"] + list(device_options.keys()),
+            help="Select the device if applicable. Leave as 'All Devices' if not.",
         )
         create_key_code_button = st.form_submit_button("Create Key Code")
         if create_key_code_button:
+            device_id = device_options[device_name] if device_name != "All Devices" else -1
             response = create_key_code(username, code, device_id)
             if response.status_code == 200:
                 st.success("Key code created successfully!")
@@ -98,14 +106,14 @@ def main():
             "Username to delete",
             help="Enter the username whose key code you want to delete.",
         )
-        device_id_delete = st.number_input(
-            "Device ID to delete from",
-            min_value=0,
-            step=1,
-            help="Enter the device ID from which to delete the key code.",
+        device_name_delete = st.selectbox(
+            "Select Device to delete from",
+            options=list(device_options.keys()),
+            help="Select the device from which to delete the key code.",
         )
         delete_key_code_button = st.form_submit_button("Delete Key Code")
         if delete_key_code_button:
+            device_id_delete = device_options[device_name_delete]
             response = delete_key_code(username_delete, device_id_delete)
             if response.status_code == 200:
                 st.success("Key code deleted successfully!")
@@ -116,14 +124,6 @@ def main():
 
     # List Key Codes Section
     st.header("List Key Codes")
-
-    devices_response = list_devices()
-    if devices_response.status_code != 200:
-        st.error(f"Error fetching devices: {devices_response.json().get('error')}")
-        return
-
-    devices = devices_response.json()["devices"]
-    device_options = {device["name"]: device["id"] for device in devices}
     with st.form("list_key_codes_form"):
         device_name_list = st.selectbox(
             "Select Device to list key codes from",
@@ -131,17 +131,14 @@ def main():
             help="Select the device to list all key codes from.",
         )
         list_key_codes_button = st.form_submit_button("List Key Codes")
-        if not list_key_codes_button:
-            return
-
-        selected_device_id = device_options[device_name_list]
-        response = list_key_codes(selected_device_id)
-        if response.status_code != 200:
-            st.error(f"Error: {response.text}")
-            return
-
-        key_codes = response.json()
-        st.json(key_codes)
+        if list_key_codes_button:
+            selected_device_id = device_options[device_name_list]
+            response = list_key_codes(selected_device_id)
+            if response.status_code == 200:
+                key_codes = response.json()
+                st.json(key_codes)
+            else:
+                st.error(f"Error: {response.text}")
 
 
 if __name__ == "__main__":
