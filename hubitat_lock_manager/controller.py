@@ -1,33 +1,18 @@
 import dataclasses
-from enum import Enum
 from typing import Iterable, Optional
 
 from hubitat_lock_manager import smart_lock
 
 
-class WebdriverBasedSmartLockFactories(Enum):
-    GENERIC_Z_WAVE_LOCK = smart_lock.Factory(
-        lambda params: smart_lock.create_generic_z_wave_lock(
-            code_lister=smart_lock.create_webdriver_based_code_lister(
-                params.config.webdriver_config
-            ),
-            code_setter=smart_lock.create_webdriver_based_code_setter(
-                params.device_id, params.config.webdriver_config
-            ),
-            position_deleter=smart_lock.create_webdriver_based_code_deleter(
-                params.device_id, params.config.webdriver_config
-            ),
-            device_id=params.device_id,
-        ),
-        lambda params: smart_lock.list_devices_via_webdriver(
-            params.config.webdriver_config
-        ),
-    )
+@dataclasses.dataclass(frozen=True)
+class CreateKeyCodeParams:
+    code: str
+    username: str
+    device_id: int = -1
 
-    def create_smart_lock(
-        self, params: smart_lock.CreateSmartLockParams
-    ) -> smart_lock.SmartLock:
-        return self.value.create_smart_lock(params)
+    @property
+    def has_device_id(self):
+        return self.device_id > -1
 
 
 @dataclasses.dataclass(frozen=True)
@@ -35,6 +20,22 @@ class SmartLockController:
     lock_provider: "SmartLockProvider"
 
     def create_key_code(
+        self, params: CreateKeyCodeParams
+    ) -> Iterable[smart_lock.CreateKeyCodeResult]:
+        """
+        Create a key code for a user on one or more smart lock devices.
+        :param params: The parameters for creating the key code.
+        :return: An iterable of the results of creating the key code.
+        """
+        if params.has_device_id:
+            yield self.create_key_code_on_one_device(
+                params.username, params.code, params.device_id
+            )
+            return
+
+        yield from self.create_key_code_on_all_devices(params.username, params.code)
+
+    def create_key_code_on_one_device(
         self, username: str, code: str, device_id: int
     ) -> smart_lock.CreateKeyCodeResult:
         # Ensure code is 8 digits and numeric
@@ -57,7 +58,7 @@ class SmartLockController:
     ) -> Iterable[smart_lock.CreateKeyCodeResult]:
         result = self.list_devices()
         for device in result.devices:
-            yield self.create_key_code(username, code, device["id"])
+            yield self.create_key_code_on_one_device(username, code, device.id)
 
     def delete_key_code(
         self, username: str, device_id: int
@@ -71,7 +72,7 @@ class SmartLockController:
     ) -> Iterable[smart_lock.DeleteKeyCodeResult]:
         result = self.list_devices()
         for device in result.devices:
-            yield self.delete_key_code(username, device["id"])
+            yield self.delete_key_code(username, device.id)
 
     def get_key_code(
         self, username: str, device_id: int, code: str = ""
@@ -93,7 +94,7 @@ class SmartLockController:
 
     def update_key_code(self, device_id: int, username: str, code: str):
         self.delete_key_code(username, device_id)
-        self.create_key_code(username, code, device_id)
+        self.create_key_code_on_one_device(username, code, device_id)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -123,26 +124,14 @@ class SmartLockProvider:
         return self.smart_lock_factory.list_smart_locks()
 
 
-def create_smart_lock_controller(
-    config: smart_lock.SmartLockConfig,
-) -> SmartLockController:
-    smart_lock_factory = config.smart_lock_factory()
-    smart_lock_controller_factory = SmartLockControllerFactory(smart_lock_factory)
+def create_smart_lock_controller(hub_ip: str) -> SmartLockController:
+    # Configure how the code will interact with the Hubitat web interface
+    webdriver_config = smart_lock.WebdriverConfig(hub_ip)
+
+    # Create a more specific configuration tailored for using a web browser
+    config = smart_lock.create_webdriver_smart_lock_config(webdriver_config)
+
+    smart_lock_controller_factory = SmartLockControllerFactory(
+        config.smart_lock_factory
+    )
     return smart_lock_controller_factory.create_smart_lock_controller(config)
-
-
-def create_webdriver_based_smart_lock_factory(
-    smart_lock_config: smart_lock.SmartLockConfig,
-) -> smart_lock.Factory:
-    def create_smart_lock(
-        params: smart_lock.CreateSmartLockParams,
-    ) -> smart_lock.SmartLock:
-        factory = WebdriverBasedSmartLockFactories.GENERIC_Z_WAVE_LOCK.value
-        return factory.create_smart_lock(
-            smart_lock.CreateSmartLockParams(params.device_id, smart_lock_config)
-        )
-
-    def list_smart_locks() -> smart_lock.ListDevicesResult:
-        return smart_lock.list_devices_via_webdriver(smart_lock_config.webdriver)
-
-    return smart_lock.Factory(create_smart_lock, list_smart_locks)

@@ -53,6 +53,12 @@ class DeletePositionParams:
 
 
 @dataclass(frozen=True)
+class Device:
+    id: int
+    name: str
+
+
+@dataclass(frozen=True)
 class Factory:
     create_smart_lock: Callable[[CreateSmartLockParams], "SmartLock"]
     list_smart_locks: Callable[[], "ListDevicesResult"]
@@ -60,7 +66,7 @@ class Factory:
 
 @dataclass(frozen=True)
 class ListDevicesResult:
-    devices: Iterable[dict]
+    devices: Iterable[Device]
 
 
 @dataclass(frozen=True)
@@ -113,6 +119,7 @@ class SmartLockConfig:
 @dataclass(frozen=True)
 class WebdriverConfig:
     hub_ip: str
+    device_name_filter: str = "lock"
 
     @staticmethod
     def create_driver() -> webdriver.Chrome:
@@ -267,7 +274,15 @@ def create_webdriver_smart_lock_factory(config: WebdriverConfig) -> Factory:
         )
 
     def list_smart_locks() -> ListDevicesResult:
-        return list_devices_via_webdriver(config)
+        list_devices_result = list_devices_via_webdriver(config)
+
+        # Filter out devices that are not locks
+        devices = filter(
+            lambda d: config.device_name_filter in d.name.lower(),
+            list_devices_result.devices,
+        )
+
+        return ListDevicesResult(devices=list(devices))
 
     return Factory(create_smart_lock, list_smart_locks)
 
@@ -336,7 +351,7 @@ def list_devices_via_webdriver(config: WebdriverConfig) -> ListDevicesResult:
             device_id = row.get_attribute("data-device-id")
             device_name = cells[1].text
 
-            devices.append({"id": device_id, "device_name": device_name})
+            devices.append(Device(id=int(device_id), name=device_name))
 
         return ListDevicesResult(devices=devices)
     finally:
