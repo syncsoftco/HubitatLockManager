@@ -32,7 +32,6 @@ def delete_key_code():
     device_id = data["device_id"]
     try:
         result = smart_lock_controller.delete_key_code(username, device_id)
-        raise ValueError(result)
         return jsonify(dataclasses.asdict(result)), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
