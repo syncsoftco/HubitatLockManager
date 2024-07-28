@@ -38,7 +38,7 @@ class CreateSmartLockParams:
 
 @dataclass(frozen=True)
 class DeleteKeyCodeParams:
-    code: str
+    username: str
 
 
 @dataclass(frozen=True)
@@ -152,15 +152,19 @@ def create_generic_z_wave_lock(
         params: DeleteKeyCodeParams,
     ) -> DeleteKeyCodeResult:
         existing_codes = code_lister.list_codes(device_id).codes
-        existing_positions = frozenset(
-            lock_code.position
-            for lock_code in existing_codes
-            if lock_code.code == params.code
+        position = next(
+            (
+                lock_code.position
+                for lock_code in existing_codes
+                if lock_code.name == params.username
+            ),
+            None,
         )
-        for position in existing_positions:
-            params = DeletePositionParams(position=position)
-            position_deleter.delete_position(params)
+        if not position:
+            return DeleteKeyCodeResult(success=True, message="Key code not found")
 
+        params = DeletePositionParams(position=position)
+        position_deleter.delete_position(params)
         return DeleteKeyCodeResult(success=True, message="Key code deleted")
 
     def list_key_codes() -> ListKeyCodesResult:
@@ -184,7 +188,7 @@ def create_webdriver_based_code_deleter(
             driver.get(f"http://{config.hub_ip}/device/edit/{device_id}")
 
             # Locate the form element by its id
-            form = driver.find_element(By.ID, "form-deleteCode-5")
+            form = driver.find_element(By.ID, "form-deleteCode-1")
 
             # Now locate the child input field within this form
             code_position = form.find_element(By.NAME, "arg[1]")
@@ -193,6 +197,9 @@ def create_webdriver_based_code_deleter(
             code_position.send_keys(
                 str(params.position)
             )  # Replace with the desired code position
+
+            # Submit the form
+            form.submit()
         finally:
             driver.quit()
 
