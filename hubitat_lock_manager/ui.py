@@ -70,7 +70,9 @@ def main():
     # Create Key Code Section
     st.header("Create Key Code")
     with st.form("create_key_code_form"):
-        username = st.text_input("Username", help="Enter the username for the key code.")
+        username = st.text_input(
+            "Username", help="Enter the username for the key code."
+        )
         code = st.text_input("Code (8 digits)", help="Enter an 8-digit code.")
         device_id = st.number_input(
             "Device ID (optional)",
@@ -118,24 +120,28 @@ def main():
     devices_response = list_devices()
     if devices_response.status_code != 200:
         st.error(f"Error fetching devices: {devices_response.json().get('error')}")
-    else:
-        devices = devices_response.json()["devices"]
-        device_options = {device['name']: device['id'] for device in devices}
-        with st.form("list_key_codes_form"):
-            device_name_list = st.selectbox(
-                "Select Device to list key codes from",
-                options=list(device_options.keys()),
-                help="Select the device to list all key codes from.",
-            )
-            list_key_codes_button = st.form_submit_button("List Key Codes")
-            if list_key_codes_button:
-                selected_device_id = device_options[device_name_list]
-                response = list_key_codes(selected_device_id)
-                if response.status_code == 200:
-                    key_codes = response.json()
-                    st.json(key_codes)
-                else:
-                    st.error(f"Error: {response.text}")
+        return
+
+    devices = devices_response.json()["devices"]
+    device_options = {device["name"]: device["id"] for device in devices}
+    with st.form("list_key_codes_form"):
+        device_name_list = st.selectbox(
+            "Select Device to list key codes from",
+            options=list(device_options.keys()),
+            help="Select the device to list all key codes from.",
+        )
+        list_key_codes_button = st.form_submit_button("List Key Codes")
+        if not list_key_codes_button:
+            return
+
+        selected_device_id = device_options[device_name_list]
+        response = list_key_codes(selected_device_id)
+        if response.status_code != 200:
+            st.error(f"Error: {response.text}")
+            return
+
+        key_codes = response.json()
+        st.json(key_codes)
 
 
 if __name__ == "__main__":

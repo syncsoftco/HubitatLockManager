@@ -50,7 +50,7 @@ def list_devices():
 def list_key_codes():
     device_id = request.args.get("device_id", type=int)
     if not device_id:
-        return jsonify({"error": "device_id is required"}),
+        return (jsonify({"error": "device_id is required"}),)
     #
     # device_ids = frozenset(
     #     [device.id for device in smart_lock_controller.list_devices().devices]
