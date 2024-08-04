@@ -56,7 +56,7 @@ class TestSmartLock(TestCase):
 
     def test_create_key_code_success(self):
         # Arrange
-        params = CreateKeyCodeParams(code="1234", username="test_user")
+        params = smart_lock.CreateKeyCodeParams(code="1234", username="test_user")
 
         # Act
         result = self.sut.create_key_code(params)
@@ -83,7 +83,7 @@ class TestSmartLock(TestCase):
         self.fake_code_lister.codes = [
             smart_lock.LockCode(code="5678", name="test_user", position=1)
         ]
-        params = CreateKeyCodeParams(code="1234", username="test_user")
+        params = smart_lock.CreateKeyCodeParams(code="1234", username="test_user")
 
         # Act / Assert
         with self.assertRaises(ValueError) as context:
