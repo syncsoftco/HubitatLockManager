@@ -69,7 +69,7 @@ class TestSmartLock(TestCase):
     def test_create_key_code_duplicate_code(self):
         # Arrange
         self.fake_code_lister.codes = [
-            LockCode(code="1234", name="user1", position=1)
+            smart_lock.LockCode(code="1234", name="user1", position=1)
         ]
         params = smart_lock.CreateKeyCodeParams(code="1234", username="test_user")
 
@@ -81,7 +81,7 @@ class TestSmartLock(TestCase):
     def test_create_key_code_duplicate_username(self):
         # Arrange
         self.fake_code_lister.codes = [
-            LockCode(code="5678", name="test_user", position=1)
+            smart_lock.LockCode(code="5678", name="test_user", position=1)
         ]
         params = CreateKeyCodeParams(code="1234", username="test_user")
 
@@ -93,7 +93,7 @@ class TestSmartLock(TestCase):
     def test_delete_key_code_success(self):
         # Arrange
         self.fake_code_lister.codes = [
-            LockCode(code="1234", name="test_user", position=1)
+            smart_lock.LockCode(code="1234", name="test_user", position=1)
         ]
         params = smart_lock.DeleteKeyCodeParams(username="test_user")
 
@@ -108,7 +108,7 @@ class TestSmartLock(TestCase):
     def test_delete_key_code_not_found(self):
         # Arrange
         self.fake_code_lister.codes = [
-            LockCode(code="5678", name="another_user", position=1)
+            smart_lock.LockCode(code="5678", name="another_user", position=1)
         ]
         params = smart_lock.DeleteKeyCodeParams(username="test_user")
 
