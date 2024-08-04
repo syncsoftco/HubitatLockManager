@@ -3,14 +3,15 @@ from unittest import TestCase
 from typing import List
 import time
 
-# Assuming all the classes and methods from your implementation are available
+from hubitat_lock_manager import smart_lock
+
 
 # Fake implementations of the test doubles
-class FakePositionDeleter(PositionDeleter):
+class FakePositionDeleter(smart_lock.PositionDeleter):
     def __init__(self):
         self.deleted_positions = []
 
-    def delete_position(self, params: DeletePositionParams) -> None:
+    def delete_position(self, params: smart_lock.DeletePositionParams) -> None:
         self.deleted_positions.append(params.position)
 
 
@@ -21,7 +22,7 @@ class FakeCodeLister(CodeLister):
         self.codes = codes
 
     def list_codes(self, device_id: int) -> ListKeyCodesResult:
-        return ListKeyCodesResult(codes=self.codes)
+        return smart_lock.ListKeyCodesResult(codes=self.codes)
 
 
 class FakeCodeSetter(CodeSetter):
@@ -34,9 +35,9 @@ class FakeCodeSetter(CodeSetter):
 
     def set_code(self, params: SetCodeParams) -> SetCodeResult:
         position = self.get_next_position()
-        self.codes.append(LockCode(params.code, params.name, position))
+        self.codes.append(smart_lock.LockCode(params.code, params.name, position))
         self.next_position += 1
-        return SetCodeResult(position)
+        return smart_lock.SetCodeResult(position)
 
 
 # Test case implementation
