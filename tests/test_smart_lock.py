@@ -50,7 +50,7 @@ class TestSmartLock(TestCase):
         self.fake_code_lister = FakeCodeLister()
         self.fake_code_setter = FakeCodeSetter()
 
-        self.sut = create_generic_z_wave_lock(
+        self.sut = smart_lock.create_generic_z_wave_lock(
             self.device_id, self.fake_position_deleter, self.fake_code_lister, self.fake_code_setter
         )
 
