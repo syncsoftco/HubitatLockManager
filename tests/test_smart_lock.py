@@ -15,17 +15,17 @@ class FakePositionDeleter(smart_lock.PositionDeleter):
         self.deleted_positions.append(params.position)
 
 
-class FakeCodeLister(CodeLister):
+class FakeCodeLister(smart_lock.CodeLister):
     def __init__(self, codes=None):
         if codes is None:
             codes = []
         self.codes = codes
 
-    def list_codes(self, device_id: int) -> ListKeyCodesResult:
+    def list_codes(self, device_id: int) -> smart_lock.ListKeyCodesResult:
         return smart_lock.ListKeyCodesResult(codes=self.codes)
 
 
-class FakeCodeSetter(CodeSetter):
+class FakeCodeSetter(smart_lock.CodeSetter):
     def __init__(self):
         self.codes = []
         self.next_position = 1
@@ -33,7 +33,7 @@ class FakeCodeSetter(CodeSetter):
     def get_next_position(self) -> int:
         return self.next_position
 
-    def set_code(self, params: SetCodeParams) -> SetCodeResult:
+    def set_code(self, params: smart_lock.SetCodeParams) -> smart_lock.SetCodeResult:
         position = self.get_next_position()
         self.codes.append(smart_lock.LockCode(params.code, params.name, position))
         self.next_position += 1
@@ -71,7 +71,7 @@ class TestSmartLock(TestCase):
         self.fake_code_lister.codes = [
             LockCode(code="1234", name="user1", position=1)
         ]
-        params = CreateKeyCodeParams(code="1234", username="test_user")
+        params = smart_lock.CreateKeyCodeParams(code="1234", username="test_user")
 
         # Act / Assert
         with self.assertRaises(ValueError) as context:
