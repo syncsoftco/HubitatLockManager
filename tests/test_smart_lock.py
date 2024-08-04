@@ -42,7 +42,6 @@ class FakeCodeSetter(smart_lock.CodeSetter):
 
 # Test case implementation
 class TestSmartLock(TestCase):
-
     def setUp(self):
         # Arrange
         self.device_id = 1
@@ -51,7 +50,10 @@ class TestSmartLock(TestCase):
         self.fake_code_setter = FakeCodeSetter()
 
         self.sut = smart_lock.create_generic_z_wave_lock(
-            self.device_id, self.fake_position_deleter, self.fake_code_lister, self.fake_code_setter
+            self.device_id,
+            self.fake_position_deleter,
+            self.fake_code_lister,
+            self.fake_code_setter,
         )
 
     def test_create_key_code_success(self):
@@ -124,7 +126,7 @@ class TestSmartLock(TestCase):
         # Arrange
         self.fake_code_lister.codes = [
             smart_lock.LockCode(code="1234", name="user1", position=1),
-            smart_lock.LockCode(code="5678", name="user2", position=2)
+            smart_lock.LockCode(code="5678", name="user2", position=2),
         ]
 
         # Act
