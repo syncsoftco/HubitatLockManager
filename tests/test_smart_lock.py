@@ -50,7 +50,7 @@ class TestSmartLock(TestCase):
         self.fake_code_lister = FakeCodeLister()
         self.fake_code_setter = FakeCodeSetter()
 
-        self.smart_lock = create_generic_z_wave_lock(
+        self.sut = create_generic_z_wave_lock(
             self.device_id, self.fake_position_deleter, self.fake_code_lister, self.fake_code_setter
         )
 
@@ -59,7 +59,7 @@ class TestSmartLock(TestCase):
         params = CreateKeyCodeParams(code="1234", username="test_user")
 
         # Act
-        result = self.smart_lock.create_key_code(params)
+        result = self.sut.create_key_code(params)
 
         # Assert
         self.assertEqual(result.position, 1)
@@ -75,7 +75,7 @@ class TestSmartLock(TestCase):
 
         # Act / Assert
         with self.assertRaises(ValueError) as context:
-            self.smart_lock.create_key_code(params)
+            self.sut.create_key_code(params)
         self.assertEqual(str(context.exception), "Code 1234 already exists")
 
     def test_create_key_code_duplicate_username(self):
@@ -87,7 +87,7 @@ class TestSmartLock(TestCase):
 
         # Act / Assert
         with self.assertRaises(ValueError) as context:
-            self.smart_lock.create_key_code(params)
+            self.sut.create_key_code(params)
         self.assertEqual(str(context.exception), "Key code for test_user already exists")
 
     def test_delete_key_code_success(self):
@@ -95,10 +95,10 @@ class TestSmartLock(TestCase):
         self.fake_code_lister.codes = [
             LockCode(code="1234", name="test_user", position=1)
         ]
-        params = DeleteKeyCodeParams(username="test_user")
+        params = smart_lock.DeleteKeyCodeParams(username="test_user")
 
         # Act
-        result = self.smart_lock.delete_key_code(params)
+        result = self.sut.delete_key_code(params)
 
         # Assert
         self.assertTrue(result.success)
@@ -110,10 +110,10 @@ class TestSmartLock(TestCase):
         self.fake_code_lister.codes = [
             LockCode(code="5678", name="another_user", position=1)
         ]
-        params = DeleteKeyCodeParams(username="test_user")
+        params = smart_lock.DeleteKeyCodeParams(username="test_user")
 
         # Act
-        result = self.smart_lock.delete_key_code(params)
+        result = self.sut.delete_key_code(params)
 
         # Assert
         self.assertTrue(result.success)
@@ -123,12 +123,12 @@ class TestSmartLock(TestCase):
     def test_list_key_codes(self):
         # Arrange
         self.fake_code_lister.codes = [
-            LockCode(code="1234", name="user1", position=1),
-            LockCode(code="5678", name="user2", position=2)
+            smart_lock.LockCode(code="1234", name="user1", position=1),
+            smart_lock.LockCode(code="5678", name="user2", position=2)
         ]
 
         # Act
-        result = self.smart_lock.list_key_codes()
+        result = self.sut.list_key_codes()
 
         # Assert
         self.assertEqual(len(result.codes), 2)
