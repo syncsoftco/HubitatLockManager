@@ -6,7 +6,7 @@ from hubitat_lock_manager import smart_lock
 DEVICE_IDS = os.getenv("DEVICE_IDS", "1,2,3").split(",")
 HUB_IP = os.getenv("HUB_IP", "hub_ip")
 LOCK_CODE = os.getenv("LOCK_CODE", "54337082")
-NAME = os.getenv("NAME", "Shane McCauley")
+NAME = os.getenv("NAME", "John Smith")
 
 print(f"Lock code under test: {LOCK_CODE}")
 
