@@ -1,4 +1,4 @@
-name: Semantic Version
+name: Semantic Version and Publish
 
 on:
   push:
@@ -31,7 +31,7 @@ jobs:
           tag_prefix: "v"
           major_pattern: "(MAJOR)"
           minor_pattern: "(MINOR)"
-          version_format: "${major}.${minor}.${patch}-prerelease${increment}"
+          version_format: "${{ major }}.${{ minor }}.${{ patch }}-prerelease${{ increment }}"
           enable_prerelease_mode: true
 
       - name: Update Version in version.py
@@ -55,9 +55,42 @@ jobs:
           git tag ${{ steps.version.outputs.version_tag }}
           git push https://$GITHUB_ACTOR:${{ secrets.ACTIONS_TOKEN }}@github.com/${{ github.repository }} --tags
 
-      # - name: Publish Package
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
-      #   run: |
-      #     python setup.py sdist bdist_wheel
-      #     twine upload dist/*
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Flask API Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./hubitat_lock_manager/Dockerfile.api
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/flask-api:${{ steps.version.outputs.version_tag }}
+            ghcr.io/${{ github.repository_owner }}/flask-api:latest
+          build-args:
+            TAG: ${{ steps.version.outputs.version_tag }}
+          push: true
+
+      - name: Build and push Streamlit UI Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./hubitat_lock_manager/Dockerfile.ui
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/streamlit-ui:${{ steps.version.outputs.version_tag }}
+            ghcr.io/${{ github.repository_owner }}/streamlit-ui:latest
+          build-args:
+            TAG: ${{ steps.version.outputs.version_tag }}
+          push: true
+
+      - name: Test Docker images
+        run: |
+          curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64
+          chmod +x container-structure-test-linux-amd64
+          ./container-structure-test-linux-amd64 test --image ghcr.io/${{ github.repository_owner }}/flask-api:${{ steps.version.outputs.version_tag }} --config tests/container-test.yaml
+          ./container-structure-test-linux-amd64 test --image ghcr.io/${{ github.repository_owner }}/streamlit-ui:${{ steps.version.outputs.version_tag }} --config tests/container-test.yaml
