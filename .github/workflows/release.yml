@@ -69,7 +69,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./hubitat_lock_manager/Dockerfile.api
+          file: Dockerfile.api
           tags: |
             ghcr.io/${{ github.repository_owner }}/flask-api:${{ steps.version.outputs.version_tag }}
             ghcr.io/${{ github.repository_owner }}/flask-api:latest
@@ -80,7 +80,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./hubitat_lock_manager/Dockerfile.ui
+          file: Dockerfile.ui
           tags: |
             ghcr.io/${{ github.repository_owner }}/streamlit-ui:${{ steps.version.outputs.version_tag }}
             ghcr.io/${{ github.repository_owner }}/streamlit-ui:latest
