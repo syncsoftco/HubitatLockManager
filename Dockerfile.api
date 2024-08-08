@@ -1,28 +1,30 @@
-# Use an official Python runtime as a parent image
+# Use the official Python image from the Docker Hub
 FROM python:3.9-slim
 
-# Set build-time arguments
-ARG TAG
-
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Download and extract the repository zip at the specific tag
-RUN apt-get update && apt-get install -y curl unzip && rm -rf /var/lib/apt/lists/* \
-    && curl -L -o repo.zip https://api.github.com/repos/${GITHUB_REPOSITORY}/zipball/${TAG} \
-    && echo $(sha256sum repo.zip) \
-    && unzip repo.zip \
-    && mv $(ls -d */ | head -n 1)/* . \
-    && rm -rf repo.zip $(ls -d */ | head -n 1)
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    unzip \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install any needed packages specified in requirements.txt
+# Define build arguments
+ARG GITHUB_REPOSITORY
+ARG TAG
+
+# Clone the repository at the specified tag
+RUN git clone --branch ${TAG} https://github.com/${GITHUB_REPOSITORY}.git repo \
+    && mv repo/* . \
+    && rm -rf repo
+
+# Install any remaining dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Make port 5000 available to the world outside this container
+# Expose the port the app runs on
 EXPOSE 5000
 
-# Define environment variable
-ENV FLASK_APP=api.py
-
-# Run flask command
-CMD ["flask", "run", "--host=0.0.0.0"]
+# Run the application
+CMD ["python", "api.py"]
