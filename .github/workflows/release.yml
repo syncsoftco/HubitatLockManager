@@ -70,6 +70,7 @@ jobs:
         with:
           context: .
           file: Dockerfile.api
+          push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/flask-api:${{ steps.version.outputs.version_tag }}
             ghcr.io/${{ github.repository_owner }}/flask-api:latest
@@ -82,6 +83,7 @@ jobs:
         with:
           context: .
           file: Dockerfile.ui
+          push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/streamlit-ui:${{ steps.version.outputs.version_tag }}
             ghcr.io/${{ github.repository_owner }}/streamlit-ui:latest
