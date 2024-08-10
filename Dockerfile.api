@@ -4,6 +4,10 @@ FROM python:3.9-slim
 # Set the working directory in the container
 WORKDIR /app
 
+# Define build arguments
+ARG GITHUB_REPOSITORY
+ARG TAG
+
 # Define the repository path
 ARG REPO_PATH=https://github.com/${GITHUB_REPOSITORY}.git
 
