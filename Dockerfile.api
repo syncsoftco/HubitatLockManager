@@ -1,28 +1,23 @@
 # Use the official Python image from the Docker Hub
 FROM python:3.9-slim
 
-# Set the working directory in the container
-WORKDIR /app
-
 # Install git and any other necessary dependencies
 RUN apt-get update && apt-get install -y git
 
-# Define build arguments
+# Define the repository path as a build argument
 ARG GITHUB_REPOSITORY
 ARG TAG
 
-# Define the repository path
+# Construct the repository URL
 ARG REPO_PATH=https://github.com/${GITHUB_REPOSITORY}.git
 
-# Install necessary dependencies
+# Install necessary Python dependencies
 RUN echo "Building with TAG: ${TAG}" && \
     echo "Repository Path: ${REPO_PATH}" && \
     pip install git+${REPO_PATH}@${TAG}
-# Capture the Python site-packages path and store it in an environment variable
-RUN export SITE_PACKAGES=$(python -c 'import site; print(site.getsitepackages()[0])')
 
 # Expose the port the app runs on
 EXPOSE 5000
 
 # Run the application
-CMD ["python", "${SITE_PACKAGES}/hubitat_lock_manager/api.py"]
+CMD ["python", "-m", "hubitat_lock_manager.api"]
