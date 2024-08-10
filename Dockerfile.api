@@ -5,26 +5,13 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Install necessary dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    unzip \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+pip install git+https://github.com/syncsoftco/HubitatLockManager.git@v0.0.29
 
-# Define build arguments
-ARG GITHUB_REPOSITORY
-ARG TAG
-
-# Clone the repository at the specified tag
-RUN git clone --branch ${TAG} https://github.com/${GITHUB_REPOSITORY}.git repo \
-    && mv repo/* . \
-    && rm -rf repo
-
-# Install any remaining dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Capture the Python site-packages path and store it in an environment variable
+RUN export SITE_PACKAGES=$(python -c 'import site; print(site.getsitepackages()[0])')
 
 # Expose the port the app runs on
 EXPOSE 5000
 
 # Run the application
-CMD ["python", "api.py"]
+CMD ["python", "${SITE_PACKAGES}/hubitat_lock_manager/api.py"]
