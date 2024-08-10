@@ -1,6 +1,7 @@
 import os
 from setuptools import setup, find_packages
 
+
 # Read the version from the version.py file
 def read_version():
     version = {}
@@ -17,7 +18,11 @@ setup(
     name="hubitat_lock_manager",
     version=read_version(),
     packages=find_packages(),
-    install_requires=["requests", "selenium"],
+    install_requires=[
+        "flask>=3.0.3,<4.0.0",
+        "requests>=2.32.3,<3.0.0",
+        "selenium>=4.23.1,<5.0.0",
+    ],
     entry_points={
         "console_scripts": [
             "hubitat-lock-manager=hubitat_lock_manager.main:main",
