@@ -12,9 +12,7 @@ ARG TAG
 ARG REPO_PATH=https://github.com/${GITHUB_REPOSITORY}.git
 
 # Install necessary Python dependencies
-RUN echo "Building with TAG: ${TAG}" && \
-    echo "Repository Path: ${REPO_PATH}" && \
-    pip install git+${REPO_PATH}@${TAG}
+RUN pip install git+${REPO_PATH}@${TAG}
 
 # Expose the port the app runs on
 EXPOSE 5000
