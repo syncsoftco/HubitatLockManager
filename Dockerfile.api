@@ -4,9 +4,11 @@ FROM python:3.9-slim
 # Install git and any other necessary dependencies
 RUN apt-get update && apt-get install -y git
 
-# Define the repository path as a build argument
+# Define build arguments
 ARG GITHUB_REPOSITORY
 ARG TAG
+ARG APP_MODULE
+ARG APP_PORT
 
 # Construct the repository URL
 ARG REPO_PATH=https://github.com/${GITHUB_REPOSITORY}.git
@@ -15,7 +17,7 @@ ARG REPO_PATH=https://github.com/${GITHUB_REPOSITORY}.git
 RUN pip install git+${REPO_PATH}@${TAG}
 
 # Expose the port the app runs on
-EXPOSE 5000
+EXPOSE ${APP_PORT}
 
-# Run the application
-CMD ["python", "-m", "hubitat_lock_manager.api"]
+# Run the application with the parameterized entry point
+CMD ["python", "-m", "${APP_MODULE}"]
