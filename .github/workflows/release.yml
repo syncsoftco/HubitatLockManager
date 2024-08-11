@@ -65,7 +65,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Flask API Docker image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -77,22 +77,6 @@ jobs:
           build-args: |
             TAG=${{ steps.version.outputs.version_tag }}
             GITHUB_REPOSITORY=${{ github.repository }}
-            APP_MODULE="hubitat_lock_manager.api"
-            APP_PORT=5000
-      - name: Build and push Streamlit UI Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: Dockerfile
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/streamlit-ui:${{ steps.version.outputs.version_tag }}
-            ghcr.io/${{ github.repository_owner }}/streamlit-ui:latest
-          build-args: |
-            TAG=${{ steps.version.outputs.version_tag }}
-            GITHUB_REPOSITORY=${{ github.repository }}
-            APP_MODULE="hubitat_lock_manager.ui"
-            APP_PORT=5000
 
       - name: Test Docker images
         run: |
