@@ -7,8 +7,6 @@ RUN apt-get update && apt-get install -y git
 # Define build arguments
 ARG GITHUB_REPOSITORY
 ARG TAG
-ARG APP_MODULE
-ARG APP_PORT
 
 # Construct the repository URL
 ARG REPO_PATH=https://github.com/${GITHUB_REPOSITORY}.git
