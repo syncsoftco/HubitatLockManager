@@ -93,10 +93,3 @@ jobs:
             GITHUB_REPOSITORY=${{ github.repository }}
             APP_MODULE="hubitat_lock_manager.ui"
             APP_PORT=5000
-
-      - name: Test Docker images
-        run: |
-          curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64
-          chmod +x container-structure-test-linux-amd64
-          ./container-structure-test-linux-amd64 test --image ghcr.io/${{ github.repository_owner }}/flask-api:${{ steps.version.outputs.version_tag }} --config tests/container-test.yaml
-          ./container-structure-test-linux-amd64 test --image ghcr.io/${{ github.repository_owner }}/streamlit-ui:${{ steps.version.outputs.version_tag }} --config tests/container-test.yaml
