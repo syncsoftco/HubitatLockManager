@@ -72,8 +72,8 @@ jobs:
           file: Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/hubitat-lock-manager:${{ steps.version.outputs.version_tag }}
-            ghcr.io/${{ github.repository_owner }}/hubitat-lock-manager:latest
+            ghcr.io/${{ github.repository_owner }}/hubitat-lock-manager-api:${{ steps.version.outputs.version_tag }}
+            ghcr.io/${{ github.repository_owner }}/hubitat-lock-manager-api:latest
           build-args: |
             TAG=${{ steps.version.outputs.version_tag }}
             GITHUB_REPOSITORY=${{ github.repository }}
@@ -86,8 +86,8 @@ jobs:
           file: Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/streamlit-ui:${{ steps.version.outputs.version_tag }}
-            ghcr.io/${{ github.repository_owner }}/streamlit-ui:latest
+            ghcr.io/${{ github.repository_owner }}/hubitat-lock-manager-ui:${{ steps.version.outputs.version_tag }}
+            ghcr.io/${{ github.repository_owner }}/hubitat-lock-manager-ui:latest
           build-args: |
             TAG=${{ steps.version.outputs.version_tag }}
             GITHUB_REPOSITORY=${{ github.repository }}
