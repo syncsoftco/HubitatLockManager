@@ -1,5 +1,5 @@
 # Define build argument for the base image tag
-ARG BASE_TAG=latest
+ARG TAG=latest
 
 # Extend from the dynamically tagged base Dockerfile
 FROM syncsoftco/hubitat-lock-manager:${BASE_TAG}
