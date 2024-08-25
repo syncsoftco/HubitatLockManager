@@ -19,5 +19,5 @@ RUN pip install git+${REPO_PATH}@${TAG}
 # Expose the port the app runs on
 EXPOSE ${APP_PORT}
 
-# Run the application with the parameterized entry point
-CMD ["python", "-m", "${APP_MODULE}"]
+# Use the shell form of CMD to evaluate APP_MODULE
+CMD python -m ${APP_MODULE}
