@@ -91,5 +91,5 @@ jobs:
           build-args: |
             TAG=${{ steps.version.outputs.version_tag }}
             GITHUB_REPOSITORY=${{ github.repository }}
-            APP_MODULE="hubitat_lock_manager.ui"
+            APP_MODULE="hubitat_lock_manager.ui_launcher"
             APP_PORT=5000
