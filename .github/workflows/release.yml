@@ -88,7 +88,7 @@ jobs:
           tags: |
             syncsoftco/hubitat-lock-manager-ui:${{ steps.version.outputs.version_tag }}
             syncsoftco/hubitat-lock-manager-ui:latest
-          build_args: |
+          build-args: |
             TAG=${{ steps.version.outputs.version_tag }}
             GITHUB_REPOSITORY=${{ github.repository }}
             APP_MODULE="hubitat_lock_manager.ui"
