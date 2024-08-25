@@ -51,7 +51,7 @@ def list_devices():
 def list_key_codes():
     device_id = request.args.get("device_id", type=int)
     if not device_id:
-        raise ValueError("device_id is required"})
+        raise ValueError("device_id is required")
 
     try:
         result = smart_lock_controller.list_key_codes(device_id)
