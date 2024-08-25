@@ -1,8 +1,8 @@
 # Define build argument for the base image tag
-ARG BASE_TAG=latest
+ARG TAG=latest
 
 # Extend from the dynamically tagged base Dockerfile
-FROM syncsoftco/hubitat-lock-manager:${BASE_TAG}
+FROM syncsoftco/hubitat-lock-manager:${TAG}
 
 # Use the shell form of CMD to launch the executable
 CMD python -m hubitat_lock_manager.api
