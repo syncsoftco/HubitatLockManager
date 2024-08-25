@@ -1,6 +1,7 @@
 import dataclasses
 
 from flask import Flask, request, jsonify
+import os
 
 from hubitat_lock_manager import controller
 
@@ -50,13 +51,7 @@ def list_devices():
 def list_key_codes():
     device_id = request.args.get("device_id", type=int)
     if not device_id:
-        return (jsonify({"error": "device_id is required"}),)
-    #
-    # device_ids = frozenset(
-    #     [device.id for device in smart_lock_controller.list_devices().devices]
-    # )
-    # if device_id not in device_ids:
-    #     return jsonify({"error": f"device_id {device_id} not found"}), 400
+        raise ValueError("device_id is required"})
 
     try:
         result = smart_lock_controller.list_key_codes(device_id)
