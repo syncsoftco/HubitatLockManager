@@ -20,8 +20,9 @@ setup(
     packages=find_packages(),
     install_requires=[
         "flask>=3.0.3,<4.0.0",
-        "requests>=2.32.3,<3.0.0",
-        "selenium>=4.23.1,<5.0.0",
+        "requests>=2.32.3,<3.0",
+        "selenium>=4.23.1,<5.0",
+        "streamlit>=1.37.1,<2.0",
     ],
     entry_points={
         "console_scripts": [
