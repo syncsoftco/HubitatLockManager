@@ -68,7 +68,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: Dockerfile
+          file: Dockerfile.base
           push: true
           tags: |
             syncsoftco/hubitat-lock-manager:${{ steps.version.outputs.version_tag }}
@@ -81,7 +81,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: Dockerfile
+          file: Dockerfile.api
           push: true
           tags: |
             syncsoftco/hubitat-lock-manager-api:${{ steps.version.outputs.version_tag }}
@@ -95,7 +95,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: Dockerfile
+          file: Dockerfile.ui
           push: true
           tags: |
             syncsoftco/hubitat-lock-manager-ui:${{ steps.version.outputs.version_tag }}
