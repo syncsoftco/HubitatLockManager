@@ -8,16 +8,12 @@ RUN apt-get update && apt-get install -y git
 ARG GITHUB_REPOSITORY
 ARG TAG
 ARG APP_MODULE
-ARG APP_PORT
 
 # Construct the repository URL
 ARG REPO_PATH=https://github.com/${GITHUB_REPOSITORY}.git
 
 # Install necessary Python dependencies
 RUN pip install git+${REPO_PATH}@${TAG}
-
-# Expose the port the app runs on
-EXPOSE ${APP_PORT}
 
 # Use the shell form of CMD to evaluate APP_MODULE
 CMD python -m ${APP_MODULE}
