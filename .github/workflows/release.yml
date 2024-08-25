@@ -64,6 +64,19 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Build and push the base Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: |
+            syncsoftco/hubitat-lock-manager:${{ steps.version.outputs.version_tag }}
+            syncsoftco/hubitat-lock-manager:latest
+          build-args: |
+            GITHUB_REPOSITORY=${{ github.repository }}
+            TAG=${{ steps.version.outputs.version_tag }}
+
       - name: Build and push Flask API Docker image
         uses: docker/build-push-action@v5
         with:
@@ -74,8 +87,8 @@ jobs:
             syncsoftco/hubitat-lock-manager-api:${{ steps.version.outputs.version_tag }}
             syncsoftco/hubitat-lock-manager-api:latest
           build-args: |
-            TAG=${{ steps.version.outputs.version_tag }}
             GITHUB_REPOSITORY=${{ github.repository }}
+            TAG=${{ steps.version.outputs.version_tag }}
             APP_MODULE="hubitat_lock_manager.api"
 
       - name: Build and push Streamlit UI Docker image
@@ -88,6 +101,6 @@ jobs:
             syncsoftco/hubitat-lock-manager-ui:${{ steps.version.outputs.version_tag }}
             syncsoftco/hubitat-lock-manager-ui:latest
           build-args: |
-            TAG=${{ steps.version.outputs.version_tag }}
             GITHUB_REPOSITORY=${{ github.repository }}
+            TAG=${{ steps.version.outputs.version_tag }}
             APP_MODULE="hubitat_lock_manager.ui_launcher"
