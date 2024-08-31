@@ -151,7 +151,7 @@ def main(api_url):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run the Smart Lock Management Streamlit app.")
-    parser.add_argument("--api-url", type=str, default="http://127.0.0.1:5000", help="URL of the Flask API")
+    parser.add_argument("--api-url", type=str, required=True, help="URL of the Flask API")
     args = parser.parse_args()
 
     main(args.api_url)
