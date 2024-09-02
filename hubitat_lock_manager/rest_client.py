@@ -2,7 +2,6 @@ import urllib
 import google.auth.transport.requests
 import google.oauth2.id_token
 import json
-from typing import Protocol
 
 class CloudRunRestClient:
     def __init__(self, base_url):
