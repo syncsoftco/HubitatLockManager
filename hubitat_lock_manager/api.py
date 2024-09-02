@@ -5,7 +5,7 @@ import os
 
 from hubitat_lock_manager import controller
 
-HUB_IP = "192.168.86.37"
+HUB_IP = os.getenv("HUB_IP", "192.168.86.37")
 
 app = Flask(__name__)
 smart_lock_controller = controller.create_smart_lock_controller(HUB_IP)
