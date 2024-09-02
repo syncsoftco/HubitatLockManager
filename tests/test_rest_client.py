@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, Mock
 import json
 import urllib.error
-from hubitat_client.rest_client import CloudRunRestClient
+from hubitat_lock_manager.rest_client import CloudRunRestClient
 
 class TestCloudRunRestClient(unittest.TestCase):
 
