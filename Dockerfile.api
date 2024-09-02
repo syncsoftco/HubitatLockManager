@@ -13,5 +13,5 @@ RUN apt-get update && \
     apt-get install -y tailscale && \
     rm -rf /var/lib/apt/lists/*
 
-# Launch the executable
-CMD python -m hubitat_lock_manager.api_launcher
+# Set the ENTRYPOINT to launch the Python script
+ENTRYPOINT ["python", "-m", "hubitat_lock_manager.api_launcher"]
