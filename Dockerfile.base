@@ -12,6 +12,7 @@ ARG TAG
 ARG REPO_PATH=https://github.com/${GITHUB_REPOSITORY}.git
 
 # Install necessary Python dependencies
+RUN pip install --upgrade pip
 RUN pip install git+${REPO_PATH}@${TAG}
 
 # This base Dockerfile doesn't specify CMD, so it can be extended in child Dockerfiles
