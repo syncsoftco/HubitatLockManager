@@ -8,7 +8,6 @@ class CloudRunRestClient:
     def __init__(self, base_url):
         self.base_url = base_url
         self.audience = base_url
-        self.id_token = self._get_id_token()
 
     def _get_id_token(self):
         auth_req = google.auth.transport.requests.Request()
@@ -22,7 +21,7 @@ class CloudRunRestClient:
             req.add_header("Content-Type", "application/json")
             req.data = json.dumps(data).encode('utf-8')
 
-        req.add_header("Authorization", f"Bearer {self.id_token}")
+        req.add_header("Authorization", f"Bearer {self._get_id_token()}")
 
         try:
             with urllib.request.urlopen(req) as response:
