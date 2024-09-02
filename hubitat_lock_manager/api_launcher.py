@@ -9,9 +9,10 @@ def start_tailscale(auth_key):
     print("Tailscale started successfully.")
 
 def start_tailscaled():
-    print("Starting tailscaled...")
-    subprocess.run(["tailscaled", "--state", "/var/lib/tailscale/tailscaled.state"], check=True)
+    print("Starting tailscaled with userspace networking...")
+    subprocess.run(["tailscaled", "--state", "/var/lib/tailscale/tailscaled.state", "--tun=userspace-networking"], check=True)
     print("tailscaled started successfully.")
+
 
 def main():
     # Check if TAILSCALE_AUTHKEY is set in the environment
