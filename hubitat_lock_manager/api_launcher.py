@@ -9,6 +9,7 @@ def start_tailscaled():
 
 def start_tailscale(auth_key):
     print("Starting Tailscale...")
+    # Authenticate and start Tailscale
     subprocess.run(["tailscale", "up", "--authkey", auth_key], check=True)
     print("Tailscale started successfully.")
 
