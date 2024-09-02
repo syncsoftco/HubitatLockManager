@@ -43,8 +43,15 @@ def list_devices():
     try:
         result = smart_lock_controller.list_devices()
         return jsonify(dataclasses.asdict(result)), 200
+    except ValueError as e:
+        logging.error(f"ValueError: {str(e)}")
+        return jsonify({"error": "Invalid request data"}), 400
+    except KeyError as e:
+        logging.error(f"KeyError: {str(e)}")
+        return jsonify({"error": "Missing data"}), 400
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        logging.error(f"Unhandled Exception: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/list_key_codes", methods=["GET"])
