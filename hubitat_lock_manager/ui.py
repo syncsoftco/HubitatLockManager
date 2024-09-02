@@ -75,7 +75,12 @@ def main(api_url):
 
     # List Devices to populate dropdowns
     devices_response = list_devices(client)
-    devices_data = json.loads(devices_response)
+
+    try:
+        devices_data = json.loads(devices_response)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Failed to decode JSON response. Response body: {devices_response}") from e
+
     if not devices_data or "error" in devices_data:
         st.error(f"Error fetching devices: {devices_data.get('error')}")
         return
