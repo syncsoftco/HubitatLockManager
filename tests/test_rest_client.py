@@ -92,36 +92,6 @@ class TestCloudRunRestClient(unittest.TestCase):
         self.assertEqual(req.get_method(), "DELETE")
         self.assertEqual(response, json.dumps(self.data))
 
-    @patch("google.oauth2.id_token.fetch_id_token", return_value="test_token")
-    @patch("urllib.request.urlopen")
-    def test_http_error_handling(self, mock_urlopen, mock_fetch_id_token):
-        # Arrange
-        mock_urlopen.side_effect = urllib.error.HTTPError(
-            url=self.base_url,
-            code=404,
-            msg="Not Found",
-            hdrs=None,
-            fp=None,
-        )
-
-        # Act
-        response = self.client.get(self.resource)
-
-        # Assert
-        self.assertEqual(response, "HTTP Error: 404 - Not Found")
-
-    @patch("google.oauth2.id_token.fetch_id_token", return_value="test_token")
-    @patch("urllib.request.urlopen")
-    def test_url_error_handling(self, mock_urlopen, mock_fetch_id_token):
-        # Arrange
-        mock_urlopen.side_effect = urllib.error.URLError("No internet connection")
-
-        # Act
-        response = self.client.get(self.resource)
-
-        # Assert
-        self.assertEqual(response, "URL Error: No internet connection")
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -22,13 +22,8 @@ class CloudRunRestClient:
 
         req.add_header("Authorization", f"Bearer {self._get_id_token()}")
 
-        try:
-            with urllib.request.urlopen(req) as response:
-                return response.read().decode('utf-8')
-        except urllib.error.HTTPError as e:
-            return f"HTTP Error: {e.code} - {e.reason}"
-        except urllib.error.URLError as e:
-            return f"URL Error: {e.reason}"
+        with urllib.request.urlopen(req) as response:
+            return response.read().decode('utf-8')
 
     def get(self, resource):
         return self._make_request('GET', resource)
