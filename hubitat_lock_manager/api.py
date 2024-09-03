@@ -1,7 +1,8 @@
 import dataclasses
+import logging
+import os
 
 from flask import Flask, request, jsonify
-import os
 
 from hubitat_lock_manager import controller
 
