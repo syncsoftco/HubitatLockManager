@@ -1,23 +1,22 @@
-# Use the official Tailscale image from Docker Hub
-FROM tailscale/tailscale:latest
+# Stage 1: Build stage with Python, git, and other dependencies
+FROM python:3.9-slim as builder
 
-# Install Python, git, and any other necessary dependencies
-RUN apt-get update && apt-get install -y \
-    python3.9 \
-    python3-pip \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+# Install git
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
-# Define build arguments
+# Clone the repository and install the package
 ARG GITHUB_REPOSITORY
 ARG TAG
-
-# Construct the repository URL
 ARG REPO_PATH=https://github.com/${GITHUB_REPOSITORY}.git
 
-# Install necessary Python dependencies
-RUN python3.9 -m pip install --upgrade pip
-RUN python3.9 -m pip install git+${REPO_PATH}@${TAG}
+RUN pip install --upgrade pip
+RUN pip install git+${REPO_PATH}@${TAG}
+
+# Stage 2: Final image with Tailscale and Python application
+FROM tailscale/tailscale:latest
+
+# Copy Python installation from the builder stage
+COPY --from=builder /usr/local /usr/local
 
 # Set the ENTRYPOINT to launch the Python script
 ENTRYPOINT ["python", "-m", "hubitat_lock_manager.api_launcher"]
