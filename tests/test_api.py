@@ -13,7 +13,7 @@ class TestFlaskApp(unittest.TestCase):
         self.app = app.test_client()
         self.app.testing = True
 
-    @patch("hubitat_lock_manager.controller.smart_lock_controller.create_key_code")
+    @patch("hubitat_lock_manager.controller.SmartLockController.create_key_code")
     def test_create_key_code_success(self, mock_create_key_code):
         # Arrange
         mock_result = MagicMock()
@@ -40,7 +40,7 @@ class TestFlaskApp(unittest.TestCase):
         }])
         mock_create_key_code.assert_called_once()
 
-    @patch("hubitat_lock_manager.controller.smart_lock_controller.create_key_code")
+    @patch("hubitat_lock_manager.controller.SmartLockController.create_key_code")
     def test_create_key_code_failure(self, mock_create_key_code):
         # Arrange
         mock_create_key_code.side_effect = Exception("Creation failed")
@@ -59,7 +59,7 @@ class TestFlaskApp(unittest.TestCase):
         self.assertEqual(response.json, {"error": "Creation failed"})
         mock_create_key_code.assert_called_once()
 
-    @patch("hubitat_lock_manager.controller.smart_lock_controller.delete_key_code")
+    @patch("hubitat_lock_manager.controller.SmartLockController.delete_key_code")
     def test_delete_key_code_success(self, mock_delete_key_code):
         # Arrange
         mock_result = MagicMock()
@@ -83,7 +83,7 @@ class TestFlaskApp(unittest.TestCase):
         })
         mock_delete_key_code.assert_called_once_with("testuser", 123)
 
-    @patch("hubitat_lock_manager.controller.smart_lock_controller.delete_key_code")
+    @patch("hubitat_lock_manager.controller.SmartLockController.delete_key_code")
     def test_delete_key_code_failure(self, mock_delete_key_code):
         # Arrange
         mock_delete_key_code.side_effect = Exception("Deletion failed")
@@ -101,7 +101,7 @@ class TestFlaskApp(unittest.TestCase):
         self.assertEqual(response.json, {"error": "Deletion failed"})
         mock_delete_key_code.assert_called_once_with("testuser", 123)
 
-    @patch("hubitat_lock_manager.controller.smart_lock_controller.list_devices")
+    @patch("hubitat_lock_manager.controller.SmartLockController.list_devices")
     def test_list_devices_success(self, mock_list_devices):
         # Arrange
         mock_result = MagicMock()
@@ -115,7 +115,7 @@ class TestFlaskApp(unittest.TestCase):
         self.assertEqual(response.json, {})
         mock_list_devices.assert_called_once()
 
-    @patch("hubitat_lock_manager.controller.smart_lock_controller.list_devices")
+    @patch("hubitat_lock_manager.controller.SmartLockController.list_devices")
     def test_list_devices_failure(self, mock_list_devices):
         # Arrange
         mock_list_devices.side_effect = Exception("Internal error")
@@ -128,7 +128,7 @@ class TestFlaskApp(unittest.TestCase):
         self.assertEqual(response.json, {"error": "Internal server error"})
         mock_list_devices.assert_called_once()
 
-    @patch("hubitat_lock_manager.controller.smart_lock_controller.list_key_codes")
+    @patch("hubitat_lock_manager.controller.SmartLockController.list_key_codes")
     def test_list_key_codes_success(self, mock_list_key_codes):
         # Arrange
         mock_result = MagicMock()
@@ -142,7 +142,7 @@ class TestFlaskApp(unittest.TestCase):
         self.assertEqual(response.json, {})
         mock_list_key_codes.assert_called_once_with(123)
 
-    @patch("hubitat_lock_manager.controller.smart_lock_controller.list_key_codes")
+    @patch("hubitat_lock_manager.controller.SmartLockController.list_key_codes")
     def test_list_key_codes_failure(self, mock_list_key_codes):
         # Arrange
         mock_list_key_codes.side_effect = Exception("List failed")
