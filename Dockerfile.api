@@ -5,7 +5,7 @@ ARG TAG=latest
 FROM syncsoftco/hubitat-lock-manager:${TAG} as builder
 
 # Install PyInstaller and other necessary dependencies
-python -m pip install pyinstaller
+RUN python -m pip install pyinstaller
 
 # Create a directory for the PyInstaller build
 WORKDIR /usr/src/app
