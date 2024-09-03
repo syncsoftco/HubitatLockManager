@@ -7,7 +7,7 @@ Hubitat Lock Manager is a Python library for managing smart locks within the Hub
 You can install the library using pip:
 
 ```bash
-pip install hubitat_lock_manager
+pip install git+https://github.com/syncsoftco/HubitatLockManager@v0.0.95
 ```
 
 ## Usage
