@@ -1,16 +1,8 @@
-# Stage 1: Build stage with Python, git, and other dependencies
-FROM python:3.9-slim as builder
+# Define build argument for the base image tag
+ARG TAG=latest
 
-# Install git
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
-
-# Clone the repository and install the package
-ARG GITHUB_REPOSITORY
-ARG TAG
-ARG REPO_PATH=https://github.com/${GITHUB_REPOSITORY}.git
-
-RUN pip install --upgrade pip
-RUN pip install git+${REPO_PATH}@${TAG}
+# Stage 1: Build stage with dynamically tagged base Dockerfile
+FROM syncsoftco/hubitat-lock-manager:${TAG}
 
 # Stage 2: Final image with Tailscale and Python application
 FROM tailscale/tailscale:latest
