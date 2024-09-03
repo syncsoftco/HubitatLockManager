@@ -4,8 +4,8 @@ ARG TAG=latest
 # Stage 1: Build stage with dynamically tagged base Dockerfile
 FROM syncsoftco/hubitat-lock-manager:${TAG} as builder
 
-# Install PyInstaller and other necessary dependencies
-RUN python -m pip install pyinstaller
+# Install necessary dependencies including pyinstaller and binutils (which includes objdump)
+RUN apt-get update && apt-get install -y python3-pip binutils && pip install pyinstaller
 
 # Create a directory for the PyInstaller build
 WORKDIR /usr/src/app
