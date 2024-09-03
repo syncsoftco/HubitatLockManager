@@ -1,18 +1,17 @@
-import os
 import subprocess
-import sys
+import time
+import os
 
-def start_tailscale(auth_key):
-    print("Starting Tailscale...")
-    # Authenticate and start Tailscale
-    subprocess.run(["tailscale", "up", "--authkey", auth_key], check=True)
-    print("Tailscale started successfully.")
+def start_tailscale_daemon():
+    # Start the Tailscale daemon in the background
+    subprocess.Popen(['/usr/local/bin/tailscaled'])
 
-def start_tailscaled():
-    print("Starting tailscaled with userspace networking...")
-    subprocess.run(["tailscaled", "--state", "/var/lib/tailscale/tailscaled.state", "--tun=userspace-networking"], check=True)
-    print("tailscaled started successfully.")
+    # Wait for the Tailscale daemon to start
+    time.sleep(5)
 
+def bring_tailscale_interface_up(auth_key):
+    # Bring the Tailscale interface up using the provided auth key
+    subprocess.run(['/usr/local/bin/tailscale', 'up', '--authkey', auth_key, '--hostname', 'tailscale-gateway'])
 
 def main():
     # Check if TAILSCALE_AUTHKEY is set in the environment
@@ -20,10 +19,10 @@ def main():
 
     if auth_key:
         # Start the Tailscale daemon
-        start_tailscaled()
+        start_tailscale_daemon()
         
         # Connect to tailnet
-        start_tailscale(auth_key)
+        bring_tailscale_interface_up(auth_key)
     else:
         print("TAILSCALE_AUTHKEY is not set, skipping Tailscale startup.")
 
