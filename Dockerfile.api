@@ -2,7 +2,7 @@
 ARG TAG=latest
 
 # Stage 1: Build stage with dynamically tagged base Dockerfile
-FROM syncsoftco/hubitat-lock-manager:${TAG}
+FROM syncsoftco/hubitat-lock-manager:${TAG} as builder
 
 # Stage 2: Final image with Tailscale and Python application
 FROM tailscale/tailscale:latest
