@@ -88,6 +88,7 @@ jobs:
             syncsoftco/hubitat-lock-manager-api:latest
           build-args: |
             GITHUB_REPOSITORY=${{ github.repository }}
+            TAG=${{ steps.version.outputs.version_tag }}
 
       - name: Build and push Streamlit UI Docker image
         uses: docker/build-push-action@v5
