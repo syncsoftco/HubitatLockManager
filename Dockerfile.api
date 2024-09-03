@@ -1,14 +1,21 @@
-# Define build argument for the base image tag
-ARG TAG=latest
-
-# Stage 1: Build stage with dynamically tagged base Dockerfile
-FROM syncsoftco/hubitat-lock-manager:${TAG} as builder
-
-# Stage 2: Final image with Tailscale and Python application
+# Use the official Tailscale image from the Docker Hub
 FROM tailscale/tailscale:latest
 
-# Copy Python installation from the builder stage
-COPY --from=builder /usr/local /usr/local
+# Install git and any other necessary dependencies
+RUN apk add --no-cache python3
+RUN apk add --no-cache py3-pip
+RUN apk add --no-cache git
+
+# Define build arguments
+ARG GITHUB_REPOSITORY
+ARG TAG
+
+# Construct the repository URL
+ARG REPO_PATH=https://github.com/${GITHUB_REPOSITORY}.git
+
+# Install necessary Python dependencies
+RUN python -m pip install --upgrade pip
+RUN python -m pip install git+${REPO_PATH}@${TAG}
 
 # Set the ENTRYPOINT to launch the Python script
 ENTRYPOINT ["python", "-m", "hubitat_lock_manager.api_launcher"]
