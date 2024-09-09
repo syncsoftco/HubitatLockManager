@@ -1,28 +1,8 @@
 # Define build argument for the base image tag
 ARG TAG=latest
 
-# Stage 1: Build stage with dynamically tagged base Dockerfile
-FROM syncsoftco/hubitat-lock-manager:${TAG} as builder
-
-# Install necessary dependencies including pyinstaller and binutils (which includes objdump)
-RUN apt-get update && apt-get install -y python3-pip binutils && pip install pyinstaller
-
-# Create a directory for the PyInstaller build
-WORKDIR /usr/src/app
-
-# Find the path of the installed hubitat_lock_manager package and copy the api_launcher.py file
-RUN PACKAGE_PATH=$(python -c "import hubitat_lock_manager; print(hubitat_lock_manager.__path__[0])") \
-    && echo "Package path: $PACKAGE_PATH" \
-    && cp $PACKAGE_PATH/api_launcher.py /usr/src/app/api_launcher.py
-
-# Generate the standalone binary with PyInstaller
-RUN pyinstaller --onefile --name api_launcher api_launcher.py
-
-# Stage 2: Final image with Tailscale and Python application
-FROM tailscale/tailscale:latest
-
-# Copy the standalone binary from the builder stage
-COPY --from=builder /usr/src/app/dist/api_launcher /usr/local/bin/api_launcher
+# Extend from the dynamically tagged base Dockerfile
+FROM syncsoftco/hubitat-lock-manager:${TAG}
 
 # Set the ENTRYPOINT to run the standalone binary
-ENTRYPOINT ["/usr/local/bin/api_launcher"]
+ENTRYPOINT ["python", "-m", "hubitat_lock_manager.api"]
