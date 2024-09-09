@@ -5,4 +5,4 @@ ARG TAG=latest
 FROM syncsoftco/hubitat-lock-manager:${TAG}
 
 # Set the ENTRYPOINT to run the standalone binary
-ENTRYPOINT ["python", "-m", "hubitat_lock_manager.api_launcher"]
+ENTRYPOINT ["python", "-m", "hubitat_lock_manager.api"]
