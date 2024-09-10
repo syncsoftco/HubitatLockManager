@@ -4,5 +4,8 @@ ARG TAG=latest
 # Extend from the dynamically tagged base Dockerfile
 FROM syncsoftco/hubitat-lock-manager:${TAG}
 
+# Install golang and any other necessary dependencies
+RUN apt-get update && apt-get install -y golang
+
 # Set the ENTRYPOINT to run the standalone binary
 ENTRYPOINT ["python", "-m", "hubitat_lock_manager.api"]
