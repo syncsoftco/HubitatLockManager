@@ -6,7 +6,6 @@ import (
     "net/http"
     "net/http/httptest"
     "testing"
-    "hubitat_lock_manager"
 )
 
 
