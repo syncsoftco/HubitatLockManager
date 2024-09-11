@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"github.com/syncsoftco/HubitatLockManager/api" // Adjust this import path as needed
 )
 
 var executeCommand func(args ...string) (string, error)
