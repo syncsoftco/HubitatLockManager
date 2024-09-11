@@ -2,10 +2,15 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/syncsoftco/HubitatLockManager/api" // Adjust this import path as needed
 )
+
+var executeCommand func(args ...string) (string, error)
 
 func mockExecuteCommandSuccess(args ...string) (string, error) {
 	return `{"result": "success"}`, nil
@@ -48,7 +53,7 @@ func TestCreateKeyCode(t *testing.T) {
 			req := httptest.NewRequest(http.MethodPost, "/create_key_code", bytes.NewBuffer([]byte(tt.body)))
 			w := httptest.NewRecorder()
 
-			CreateKeyCode(w, req)
+			api.CreateKeyCode(w, req)
 
 			if w.Code != tt.wantStatus {
 				t.Errorf("expected status %v, got %v", tt.wantStatus, w.Code)
@@ -90,7 +95,7 @@ func TestDeleteKeyCode(t *testing.T) {
 			req := httptest.NewRequest(http.MethodDelete, "/delete_key_code", bytes.NewBuffer([]byte(tt.body)))
 			w := httptest.NewRecorder()
 
-			DeleteKeyCode(w, req)
+			api.DeleteKeyCode(w, req)
 
 			if w.Code != tt.wantStatus {
 				t.Errorf("expected status %v, got %v", tt.wantStatus, w.Code)
@@ -123,7 +128,7 @@ func TestListDevices(t *testing.T) {
 			req := httptest.NewRequest(http.MethodGet, "/list_devices", nil)
 			w := httptest.NewRecorder()
 
-			ListDevices(w, req)
+			api.ListDevices(w, req)
 
 			if w.Code != tt.wantStatus {
 				t.Errorf("expected status %v, got %v", tt.wantStatus, w.Code)
@@ -165,7 +170,7 @@ func TestListKeyCodes(t *testing.T) {
 			req := httptest.NewRequest(http.MethodGet, "/list_key_codes?"+tt.query, nil)
 			w := httptest.NewRecorder()
 
-			ListKeyCodes(w, req)
+			api.ListKeyCodes(w, req)
 
 			if w.Code != tt.wantStatus {
 				t.Errorf("expected status %v, got %v", tt.wantStatus, w.Code)
