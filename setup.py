@@ -27,7 +27,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "hubitat-lock-manager=hubitat_lock_manager.main:main",
+            "hubitat-lock-manager=hubitat_lock_manager.cli:main",
         ],
     },
     author="pseudonymous",
@@ -35,7 +35,7 @@ setup(
     description="A library to manage smart locks within the Hubitat ecosystem",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/hubitat_lock_manager",
+    url="https://github.com/syncsoftco/HubitatLockManager",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
