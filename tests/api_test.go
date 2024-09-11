@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-        "hubitat_lock_manager"
 )
 
 var executeCommand func(args ...string) (string, error)
