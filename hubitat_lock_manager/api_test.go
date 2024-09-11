@@ -4,7 +4,6 @@ import (
     "net/http"
     "net/http/httptest"
     "testing"
-    "hubitat_lock_manager"
 )
 
 func TestNotImplemented(t *testing.T) {
