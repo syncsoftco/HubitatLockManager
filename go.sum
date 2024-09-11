@@ -1,0 +1,4 @@
+github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
+github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
+tailscale.com v1.44.0 h1:MPos9n30kJvdyfL52045gVFyNg93K+bwgDsr8gqKq2o=
+tailscale.com v1.44.0/go.mod h1:+iYwTdeHyVJuNDu42Zafwihq1Uqfh+pW7pRaY1GD328=
