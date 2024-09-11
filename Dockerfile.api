@@ -7,5 +7,20 @@ FROM syncsoftco/hubitat-lock-manager:${TAG}
 # Install golang and any other necessary dependencies
 RUN apt-get update && apt-get install -y golang
 
-# Set the ENTRYPOINT to run the standalone binary
-ENTRYPOINT ["python", "-m", "hubitat_lock_manager.api"]
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy go.mod and go.sum for dependency management
+COPY go.mod go.sum ./
+
+# Download Go module dependencies (caches dependencies)
+RUN go mod download
+
+# Copy the source code from the hubitat_lock_manager directory
+COPY hubitat_lock_manager/api.go ./hubitat_lock_manager/
+
+# Build the Go API
+RUN go build -o /go-api ./hubitat_lock_manager/api.go
+
+# Set the ENTRYPOINT to run the Go API binary
+ENTRYPOINT ["/go-api"]
