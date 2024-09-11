@@ -21,14 +21,14 @@ type KeyCodeRequest struct {
 }
 
 // Execute hubitat_lock_manager CLI command
-func executeCommand(args ...string) (string, error) {
+func ExecuteCommand(args ...string) (string, error) {
 	cmd := exec.Command("python3", args...) // Adjust to use your hubitat_lock_manager CLI command
 	output, err := cmd.CombinedOutput()
 	return string(output), err
 }
 
-// Create key code
-func createKeyCode(w http.ResponseWriter, r *http.Request) {
+// CreateKeyCode creates a new key code
+func CreateKeyCode(w http.ResponseWriter, r *http.Request) {
 	var req KeyCodeRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid input", http.StatusBadRequest)
@@ -40,7 +40,7 @@ func createKeyCode(w http.ResponseWriter, r *http.Request) {
 		args = append(args, "--device-id", fmt.Sprint(req.DeviceID))
 	}
 
-	output, err := executeCommand(args...)
+	output, err := ExecuteCommand(args...)
 	if err != nil {
 		http.Error(w, output, http.StatusInternalServerError)
 		return
@@ -50,8 +50,8 @@ func createKeyCode(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(output))
 }
 
-// Delete key code
-func deleteKeyCode(w http.ResponseWriter, r *http.Request) {
+// DeleteKeyCode deletes a key code
+func DeleteKeyCode(w http.ResponseWriter, r *http.Request) {
 	var req KeyCodeRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid input", http.StatusBadRequest)
@@ -63,7 +63,7 @@ func deleteKeyCode(w http.ResponseWriter, r *http.Request) {
 		args = append(args, "--device-id", fmt.Sprint(req.DeviceID))
 	}
 
-	output, err := executeCommand(args...)
+	output, err := ExecuteCommand(args...)
 	if err != nil {
 		http.Error(w, output, http.StatusInternalServerError)
 		return
@@ -73,11 +73,11 @@ func deleteKeyCode(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(output))
 }
 
-// List devices
-func listDevices(w http.ResponseWriter, r *http.Request) {
+// ListDevices lists all devices
+func ListDevices(w http.ResponseWriter, r *http.Request) {
 	args := []string{"-m", "hubitat_lock_manager.main", "--hub-ip", hubIP, "--action", "list_devices"}
 
-	output, err := executeCommand(args...)
+	output, err := ExecuteCommand(args...)
 	if err != nil {
 		http.Error(w, output, http.StatusInternalServerError)
 		return
@@ -87,8 +87,8 @@ func listDevices(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(output))
 }
 
-// List key codes
-func listKeyCodes(w http.ResponseWriter, r *http.Request) {
+// ListKeyCodes lists key codes for a specific device
+func ListKeyCodes(w http.ResponseWriter, r *http.Request) {
 	deviceID := r.URL.Query().Get("device_id")
 	if deviceID == "" {
 		http.Error(w, "device_id is required", http.StatusBadRequest)
@@ -97,7 +97,7 @@ func listKeyCodes(w http.ResponseWriter, r *http.Request) {
 
 	args := []string{"-m", "hubitat_lock_manager.main", "--hub-ip", hubIP, "--action", "list", "--device-id", deviceID}
 
-	output, err := executeCommand(args...)
+	output, err := ExecuteCommand(args...)
 	if err != nil {
 		http.Error(w, output, http.StatusInternalServerError)
 		return
@@ -111,10 +111,10 @@ func main() {
 	r := mux.NewRouter()
 
 	// Define routes
-	r.HandleFunc("/create_key_code", createKeyCode).Methods("POST")
-	r.HandleFunc("/delete_key_code", deleteKeyCode).Methods("DELETE")
-	r.HandleFunc("/list_devices", listDevices).Methods("GET")
-	r.HandleFunc("/list_key_codes", listKeyCodes).Methods("GET")
+	r.HandleFunc("/create_key_code", CreateKeyCode).Methods("POST")
+	r.HandleFunc("/delete_key_code", DeleteKeyCode).Methods("DELETE")
+	r.HandleFunc("/list_devices", ListDevices).Methods("GET")
+	r.HandleFunc("/list_key_codes", ListKeyCodes).Methods("GET")
 
 	// Start the server
 	log.Println("Starting server on port 5000...")
