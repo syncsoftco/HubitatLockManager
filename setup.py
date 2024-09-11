@@ -27,7 +27,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "hubitat-lock-manager=hubitat_lock_manager.main:main",
+            "hubitat-lock-manager=hubitat_lock_manager.cli:main",
         ],
     },
     author="pseudonymous",
