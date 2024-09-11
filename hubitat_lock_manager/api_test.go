@@ -10,7 +10,7 @@ func TestNotImplemented(t *testing.T) {
     req := httptest.NewRequest(http.MethodGet, "/", nil)
     w := httptest.NewRecorder()
 
-    hubitat_lock_manager.NotImplemented(w, req)
+    NotImplemented(w, req)
 
     if w.Code != http.StatusNotImplemented {
         t.Errorf("Expected status code %v, but got %v", http.StatusNotImplemented, w.Code)
