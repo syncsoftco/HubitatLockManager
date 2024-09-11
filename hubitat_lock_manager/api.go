@@ -116,7 +116,14 @@ func main() {
     r.HandleFunc("/list_devices", ListDevices).Methods("GET")
     r.HandleFunc("/list_key_codes", ListKeyCodes).Methods("GET")
 
+    // Get the port from the environment variable or use 5000 as the default
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = "5000"
+    }
+
     // Start the server
-    log.Println("Starting server on port 5000...")
-    log.Fatal(http.ListenAndServe(":5000", r))
+    log.Printf("Starting server on port %s...\n", port)
+    log.Fatal(http.ListenAndServe(":"+port, r))
 }
+
