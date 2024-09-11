@@ -1,4 +1,5 @@
-package main
+package hubitat_lock_manager
+
 
 import (
     "bytes"
@@ -7,7 +8,6 @@ import (
     "net/http/httptest"
     "testing"
 )
-
 
 var executeCommand func(args ...string) (string, error)
 
