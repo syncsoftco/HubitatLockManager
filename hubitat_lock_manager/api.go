@@ -10,7 +10,6 @@ import (
     "github.com/gorilla/mux"
 )
 
-
 var hubIP = os.Getenv("HUB_IP")
 
 type KeyCodeRequest struct {
