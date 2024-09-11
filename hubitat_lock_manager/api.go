@@ -1,4 +1,4 @@
-package hubitat_lock_manager
+package main
 
 import (
     "encoding/json"
