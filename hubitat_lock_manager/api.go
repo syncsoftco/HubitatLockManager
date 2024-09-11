@@ -1,16 +1,15 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"log"
-	"net/http"
-	"os"
-	"os/exec"
-
-	"github.com/gorilla/mux"
+    "encoding/json"
+    "fmt"
+    "log"
+    "net/http"
+    "os"
+    "os/exec"
+    "github.com/gorilla/mux"
 )
+
 
 var hubIP = os.Getenv("HUB_IP")
 
