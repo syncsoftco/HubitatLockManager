@@ -1,8 +1,8 @@
 module github.com/syncsoftco/HubitatLockManager
 
-go 1.19
+go 1.18
 
 require (
-    github.com/gorilla/mux v1.8.0
-    tailscale.com v1.44.0
+	github.com/gorilla/mux v1.8.1 // indirect
+	tailscale.com v1.72.1 // indirect
 )
