@@ -1,23 +1,47 @@
 package main
 
 import (
+    "context"
     "encoding/json"
     "fmt"
     "log"
     "net/http"
     "os"
     "os/exec"
+    "sync"
 
     "github.com/gorilla/mux"
+    "tailscale.com/tsnet"
 )
 
-var hubIP = os.Getenv("HUB_IP")
-var executeCommand = ExecuteCommand // Default to the real implementation
+var (
+    hubIP          = os.Getenv("HUB_IP")
+    executeCommand = ExecuteCommand // Default to the real implementation
+    tsServer       *tsnet.Server
+    tsOnce         sync.Once
+)
 
 type KeyCodeRequest struct {
     Code     string `json:"code"`
     Username string `json:"username"`
     DeviceID int    `json:"device_id,omitempty"`
+}
+
+// InitializeTailscale sets up tsnet and logs into the Tailnet
+func InitializeTailscale() (*tsnet.Server, error) {
+    tsOnce.Do(func() {
+        tsServer = &tsnet.Server{} // Reads TS_AUTHKEY from environment
+
+        log.Printf("Starting Tailscale...")
+        ctx := context.Background() // Create a background context
+        if _, err := tsServer.Up(ctx); err != nil {
+            log.Fatalf("Tailscale startup failed: %v", err)
+        }
+
+        log.Printf("Tailscale started successfully")
+    })
+
+    return tsServer, nil
 }
 
 // ExecuteCommand executes hubitat_lock_manager CLI command
@@ -120,6 +144,12 @@ func ListKeyCodes(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+    // Initialize Tailscale
+    _, err := InitializeTailscale()
+    if err != nil {
+        log.Fatalf("Failed to initialize Tailscale: %v", err)
+    }
+
     r := mux.NewRouter()
 
     // Define routes
