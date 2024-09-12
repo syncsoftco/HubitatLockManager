@@ -1,8 +1,5 @@
-module github.com/syncsoftco/HubitatLockManager
+module your_module_name
 
-go 1.19
+go 1.18
 
-require (
-    github.com/gorilla/mux v1.8.0
-    tailscale.com v1.44.0
-)
+require github.com/gorilla/mux v1.8.1 // indirect
