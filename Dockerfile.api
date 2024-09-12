@@ -1,18 +1,25 @@
 # Define build argument for the base image tag
 ARG TAG=latest
-# Define build argument for the Go version with a default value of 1.20.0
-ARG GO_VERSION=1.20.0
 
 # Extend from the dynamically tagged base Dockerfile
 FROM syncsoftco/hubitat-lock-manager:${TAG}
 
-# Install Go based on the dynamically provided GO_VERSION
-RUN apt-get update && \
-    apt-get install -y wget && \
-    wget https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz && \
-    rm -rf /usr/local/go && \
-    tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz && \
-    rm go${GO_VERSION}.linux-amd64.tar.gz
+# Update apt package list
+RUN apt-get update
+
+# Install necessary packages
+RUN apt-get install -y curl
+
+# Download Go binary with a hardcoded Go version (1.20.10 in this case)
+RUN curl -fSL https://go.dev/dl/go1.20.10.linux-amd64.tar.gz -o go1.20.10.linux-amd64.tar.gz
+
+# Extract the Go binary and remove the tarball
+RUN rm -rf /usr/local/go \
+    && tar -C /usr/local -xzf go1.20.10.linux-amd64.tar.gz \
+    && rm go1.20.10.linux-amd64.tar.gz
+
+# Clean up apt cache to reduce image size
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Add Go to the PATH
 ENV PATH="/usr/local/go/bin:${PATH}"
@@ -20,17 +27,17 @@ ENV PATH="/usr/local/go/bin:${PATH}"
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy go.mod and go.sum for dependency management (copies them to /app)
+# Copy go.mod and go.sum for dependency management
 COPY go.mod go.sum ./
 
-# Download Go module dependencies (caches dependencies in /app)
+# Download Go module dependencies
 RUN go mod download
 
 # Copy the source code from the hubitat_lock_manager directory to /app/hubitat_lock_manager
 COPY hubitat_lock_manager/api.go ./hubitat_lock_manager/
 
-# Build the Go API (output binary in /app)
+# Build the Go API (builds the package or directory)
 RUN go build -o go-api ./hubitat_lock_manager/api.go
 
-# Set the ENTRYPOINT to run the Go API binary (use relative path)
+# Set the ENTRYPOINT to run the Go API binary
 ENTRYPOINT ["./go-api"]
