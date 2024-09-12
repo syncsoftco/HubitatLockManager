@@ -1,11 +1,21 @@
 # Define build argument for the base image tag
 ARG TAG=latest
+# Define build argument for the Go version with a default value of 1.20.0
+ARG GO_VERSION=1.20.0
 
 # Extend from the dynamically tagged base Dockerfile
 FROM syncsoftco/hubitat-lock-manager:${TAG}
 
-# Install golang and any other necessary dependencies
-RUN apt-get update && apt-get install -y golang
+# Install Go based on the dynamically provided GO_VERSION
+RUN apt-get update && \
+    apt-get install -y wget && \
+    wget https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz && \
+    rm -rf /usr/local/go && \
+    tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz && \
+    rm go${GO_VERSION}.linux-amd64.tar.gz
+
+# Add Go to the PATH
+ENV PATH="/usr/local/go/bin:${PATH}"
 
 # Set the working directory inside the container
 WORKDIR /app
