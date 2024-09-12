@@ -1,7 +1,7 @@
 # Define build argument for the base image tag
 ARG TAG=latest
 # Define build argument for the Go version with a default value of 1.20.0
-ARG GO_VERSION=1.20.0
+ARG GO_VERSION=1.20.10
 
 # Extend from the dynamically tagged base Dockerfile
 FROM syncsoftco/hubitat-lock-manager:${TAG}
