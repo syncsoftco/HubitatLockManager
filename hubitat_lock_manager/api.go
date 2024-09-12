@@ -29,9 +29,7 @@ type KeyCodeRequest struct {
 // InitializeTailscale sets up tsnet and logs into the Tailnet
 func InitializeTailscale() (*tsnet.Server, error) {
     tsOnce.Do(func() {
-        tsServer = &tsnet.Server{
-            AuthKey: os.Getenv("TS_AUTHKEY"), // Use TS_AUTHKEY for Tailscale auth
-        }
+        tsServer = &tsnet.Server{} // Reads TS_AUTHKEY from environment
 
         log.Printf("Starting Tailscale...")
         if _, err := tsServer.Up(); err != nil {
