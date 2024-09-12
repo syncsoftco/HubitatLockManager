@@ -41,7 +41,7 @@ func CreateKeyCode(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    args := []string{"-m", "hubitat_lock_manager.main", "--hub-ip", hubIP, "--action", "create", "--username", req.Username, "--code", req.Code}
+    args := []string{"-m", "hubitat_lock_manager.cli", "--hub-ip", hubIP, "--action", "create", "--username", req.Username, "--code", req.Code}
     if req.DeviceID != 0 {
         args = append(args, "--device-id", fmt.Sprint(req.DeviceID))
     }
@@ -66,7 +66,7 @@ func DeleteKeyCode(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    args := []string{"-m", "hubitat_lock_manager.main", "--hub-ip", hubIP, "--action", "delete", "--username", req.Username}
+    args := []string{"-m", "hubitat_lock_manager.cli", "--hub-ip", hubIP, "--action", "delete", "--username", req.Username}
     if req.DeviceID != 0 {
         args = append(args, "--device-id", fmt.Sprint(req.DeviceID))
     }
@@ -84,7 +84,7 @@ func DeleteKeyCode(w http.ResponseWriter, r *http.Request) {
 
 // ListDevices lists all devices
 func ListDevices(w http.ResponseWriter, r *http.Request) {
-    args := []string{"-m", "hubitat_lock_manager.main", "--hub-ip", hubIP, "--action", "list_devices"}
+    args := []string{"-m", "hubitat_lock_manager.cli", "--hub-ip", hubIP, "--action", "list_devices"}
 
     output, err := executeCommand(args...)
     if err != nil {
@@ -106,7 +106,7 @@ func ListKeyCodes(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    args := []string{"-m", "hubitat_lock_manager.main", "--hub-ip", hubIP, "--action", "list", "--device-id", deviceID}
+    args := []string{"-m", "hubitat_lock_manager.cli", "--hub-ip", hubIP, "--action", "list", "--device-id", deviceID}
 
     output, err := executeCommand(args...)
     if err != nil {
