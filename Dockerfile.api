@@ -13,12 +13,13 @@ RUN apt-get update
 RUN apt-get install -y curl
 
 # Download Go binary
-RUN curl -OL https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz
+RUN curl -fSL https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz -o go${GO_VERSION}.linux-amd64.tar.gz
 
-# Remove any existing Go installation and extract the new version
-RUN rm -rf /usr/local/go && \
-    tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz && \
-    rm go${GO_VERSION}.linux-amd64.tar.gz
+# Verify the download is a valid gzip file before extracting
+RUN file go${GO_VERSION}.linux-amd64.tar.gz | grep 'gzip compressed data' \
+    && rm -rf /usr/local/go \
+    && tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz \
+    && rm go${GO_VERSION}.linux-amd64.tar.gz
 
 # Clean up apt cache to reduce image size
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
