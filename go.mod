@@ -1,4 +1,4 @@
-module your_module_name
+module github.com/syncsoftco/HubitatLockManager
 
 go 1.23.1
 
