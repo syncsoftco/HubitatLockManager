@@ -8,7 +8,24 @@ FROM syncsoftco/hubitat-lock-manager:${TAG}
 RUN apt-get update
 
 # Install necessary packages
-RUN apt-get install -y curl
+RUN apt-get install -y curl unzip wget apt-transport-https ca-certificates \
+    gnupg --no-install-recommends
+
+# Install Chrome (latest stable version)
+RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
+    apt-get update && \
+    apt-get install -y google-chrome-stable --no-install-recommends
+
+# Download ChromeDriver (matching Chrome's version)
+RUN CHROME_VERSION=$(google-chrome --version | awk '{ print $3 }') && \
+    CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION") && \
+    wget -O /tmp/chromedriver.zip "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip" && \
+    unzip /tmp/chromedriver.zip -d /usr/local/bin/ && \
+    rm /tmp/chromedriver.zip
+
+# Clean up apt cache to reduce image size
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Download Go binary with a hardcoded Go version (1.23.1 in this case)
 RUN curl -fSL https://go.dev/dl/go1.23.1.linux-amd64.tar.gz -o go1.23.1.linux-amd64.tar.gz
@@ -17,9 +34,6 @@ RUN curl -fSL https://go.dev/dl/go1.23.1.linux-amd64.tar.gz -o go1.23.1.linux-am
 RUN rm -rf /usr/local/go \
     && tar -C /usr/local -xzf go1.23.1.linux-amd64.tar.gz \
     && rm go1.23.1.linux-amd64.tar.gz
-
-# Clean up apt cache to reduce image size
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Add Go to the PATH
 ENV PATH="/usr/local/go/bin:${PATH}"
@@ -38,6 +52,11 @@ COPY hubitat_lock_manager/api.go ./hubitat_lock_manager/
 
 # Build the Go API (builds the package or directory)
 RUN go build -o go-api ./hubitat_lock_manager/api.go
+
+# Set the environment variable for ChromeDriver and disable sandbox (required for running in Docker)
+ENV CHROME_BIN=/usr/bin/google-chrome \
+    CHROMEDRIVER=/usr/local/bin/chromedriver \
+    DISPLAY=:99
 
 # Set the ENTRYPOINT to run the Go API binary
 ENTRYPOINT ["./go-api"]
