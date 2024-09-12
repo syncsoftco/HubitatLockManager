@@ -12,7 +12,7 @@ def parse_args():
     parser.add_argument(
         "--action",
         required=True,
-        choices=["create", "delete", "get", "list", "update"],
+        choices=["create", "delete", "get", "list", "list_devices", "update"],
         help="Action to perform",
     )
     parser.add_argument("--username", help="Username for the key code")
