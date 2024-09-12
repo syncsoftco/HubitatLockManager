@@ -22,8 +22,13 @@ type KeyCodeRequest struct {
 
 // ExecuteCommand executes hubitat_lock_manager CLI command
 func ExecuteCommand(args ...string) (string, error) {
+    log.Printf("Executing command: python3 %v", args)
     cmd := exec.Command("python3", args...) // Adjust to use your hubitat_lock_manager CLI command
     output, err := cmd.CombinedOutput()
+    log.Printf("Command output: %s", output)
+    if err != nil {
+        log.Printf("Error executing command: %v", err)
+    }
     return string(output), err
 }
 
@@ -31,6 +36,7 @@ func ExecuteCommand(args ...string) (string, error) {
 func CreateKeyCode(w http.ResponseWriter, r *http.Request) {
     var req KeyCodeRequest
     if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+        log.Printf("Error decoding request body: %v", err)
         http.Error(w, "Invalid input", http.StatusBadRequest)
         return
     }
@@ -42,6 +48,7 @@ func CreateKeyCode(w http.ResponseWriter, r *http.Request) {
 
     output, err := executeCommand(args...)
     if err != nil {
+        log.Printf("Error creating key code: %v, Output: %s", err, output)
         http.Error(w, output, http.StatusInternalServerError)
         return
     }
@@ -54,6 +61,7 @@ func CreateKeyCode(w http.ResponseWriter, r *http.Request) {
 func DeleteKeyCode(w http.ResponseWriter, r *http.Request) {
     var req KeyCodeRequest
     if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+        log.Printf("Error decoding request body: %v", err)
         http.Error(w, "Invalid input", http.StatusBadRequest)
         return
     }
@@ -65,6 +73,7 @@ func DeleteKeyCode(w http.ResponseWriter, r *http.Request) {
 
     output, err := executeCommand(args...)
     if err != nil {
+        log.Printf("Error deleting key code: %v, Output: %s", err, output)
         http.Error(w, output, http.StatusInternalServerError)
         return
     }
@@ -79,6 +88,7 @@ func ListDevices(w http.ResponseWriter, r *http.Request) {
 
     output, err := executeCommand(args...)
     if err != nil {
+        log.Printf("Error listing devices: %v, Output: %s", err, output)
         http.Error(w, output, http.StatusInternalServerError)
         return
     }
@@ -91,6 +101,7 @@ func ListDevices(w http.ResponseWriter, r *http.Request) {
 func ListKeyCodes(w http.ResponseWriter, r *http.Request) {
     deviceID := r.URL.Query().Get("device_id")
     if deviceID == "" {
+        log.Printf("Missing device_id in query")
         http.Error(w, "device_id is required", http.StatusBadRequest)
         return
     }
@@ -99,6 +110,7 @@ func ListKeyCodes(w http.ResponseWriter, r *http.Request) {
 
     output, err := executeCommand(args...)
     if err != nil {
+        log.Printf("Error listing key codes: %v, Output: %s", err, output)
         http.Error(w, output, http.StatusInternalServerError)
         return
     }
@@ -126,4 +138,3 @@ func main() {
     log.Printf("Starting server on port %s...\n", port)
     log.Fatal(http.ListenAndServe(":"+port, r))
 }
-
