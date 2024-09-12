@@ -4,25 +4,8 @@ ARG TAG=latest
 # Extend from the dynamically tagged base Dockerfile
 FROM syncsoftco/hubitat-lock-manager:${TAG}
 
-# Update apt package list
-RUN apt-get update
-
-# Install necessary packages
-RUN apt-get install -y curl
-
-# Download Go binary with a hardcoded Go version (1.20.10 in this case)
-RUN curl -fSL https://go.dev/dl/go1.20.10.linux-amd64.tar.gz -o go1.20.10.linux-amd64.tar.gz
-
-# Extract the Go binary and remove the tarball
-RUN rm -rf /usr/local/go \
-    && tar -C /usr/local -xzf go1.20.10.linux-amd64.tar.gz \
-    && rm go1.20.10.linux-amd64.tar.gz
-
-# Clean up apt cache to reduce image size
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Add Go to the PATH
-ENV PATH="/usr/local/go/bin:${PATH}"
+# Install Go
+RUN snap install go --classic
 
 # Set the working directory inside the container
 WORKDIR /app
