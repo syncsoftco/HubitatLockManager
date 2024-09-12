@@ -22,6 +22,11 @@ def parse_args():
 
         result = smart_lock_controller.list_devices()
         return jsonify(dataclasses.asdict(result)), 200
+
+def jsonify_result(result):
+    return json.dumps(dataclasses.asdict(result))
+
+
 def main():
     args = parse_args()
 
@@ -58,7 +63,7 @@ def main():
                     args.hub_ip
                 ).delete_key_code_on_all_devices(args.username)
             )
-        pprint.pprint(f"Delete key code result: {result}")
+        pprint.pprint(f"Delete key code result: {jsonify_result(result)}")
 
     elif args.action == "get":
         if not args.username:
@@ -67,7 +72,7 @@ def main():
         result = controller.create_smart_lock_controller(args.hub_ip).get_key_code(
             args.username, args.device_id
         )
-        pprint.pprint(f"Get key code result: {result}")
+        pprint.pprint(f"Get key code result: {jsonify_result(result)}")
 
     elif args.action == "list":
         result = controller.create_smart_lock_controller(args.hub_ip).list_key_codes(
@@ -77,7 +82,7 @@ def main():
 
     elif args.action == "list_devices":
         result = controller.create_smart_lock_controller(args.hub_ip).list_devices()
-        pprint.pprint(f"List devices result: {json.dumps(dataclasses.asdict(result))}")
+        pprint.pprint(f"List devices result: {jsonify_result(result)}")
 
     elif args.action == "update":
         if not args.username or not args.code:
@@ -88,7 +93,7 @@ def main():
         result = controller.create_smart_lock_controller(args.hub_ip).update_key_code(
             args.device_id, args.username, args.code
         )
-        pprint.pprint(f"Update key code result: {result}")
+        pprint.pprint(f"Update key code result: {jsonify_result(result)}")
 
 
 if __name__ == "__main__":
