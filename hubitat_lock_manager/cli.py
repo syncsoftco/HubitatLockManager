@@ -20,8 +20,6 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-        result = smart_lock_controller.list_devices()
-        return jsonify(dataclasses.asdict(result)), 200
 
 def jsonify_result(result):
     return json.dumps(dataclasses.asdict(result))
