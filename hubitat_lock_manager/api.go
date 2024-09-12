@@ -1,6 +1,7 @@
 package main
 
 import (
+    "context"
     "encoding/json"
     "fmt"
     "log"
@@ -32,7 +33,8 @@ func InitializeTailscale() (*tsnet.Server, error) {
         tsServer = &tsnet.Server{} // Reads TS_AUTHKEY from environment
 
         log.Printf("Starting Tailscale...")
-        if _, err := tsServer.Up(); err != nil {
+        ctx := context.Background() // Create a background context
+        if _, err := tsServer.Up(ctx); err != nil {
             log.Fatalf("Tailscale startup failed: %v", err)
         }
 
