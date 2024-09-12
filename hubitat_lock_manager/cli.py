@@ -92,7 +92,7 @@ def main():
 
 if __name__ == "__main__":
     # Usage:
-    # python -m hubitat_lock_manager.main --hub-ip
+    # python -m hubitat_lock_manager.cli --hub-ip
     # <hub_ip> --app-id <app_id> --access-token <access_token> --device-id
     # <device_id> --device-type <device_type> --action <action> --username
     # <username> --code <code>
