@@ -20,7 +20,8 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-
+        result = smart_lock_controller.list_devices()
+        return jsonify(dataclasses.asdict(result)), 200
 def main():
     args = parse_args()
 
@@ -76,7 +77,7 @@ def main():
 
     elif args.action == "list_devices":
         result = controller.create_smart_lock_controller(args.hub_ip).list_devices()
-        pprint.pprint(f"List devices result: {result}")
+        pprint.pprint(f"List devices result: {json.dumps(dataclasses.asdict(result))}")
 
     elif args.action == "update":
         if not args.username or not args.code:
