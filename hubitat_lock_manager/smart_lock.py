@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Callable, Iterable
 
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -125,7 +126,10 @@ class WebdriverConfig:
     def create_driver() -> webdriver.Chrome:
         options = webdriver.ChromeOptions()
         options.add_argument("--headless")
-        return webdriver.Chrome(options=options)
+        return webdriver.Chrome(
+            service=ChromeService(ChromeDriverManager().install()),
+            options=options,
+        )
 
 
 def create_generic_z_wave_lock(
