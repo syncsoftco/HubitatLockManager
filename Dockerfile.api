@@ -17,21 +17,8 @@ RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add
     apt-get update && \
     apt-get install -y google-chrome-stable --no-install-recommends
 
-# Fetch the Chrome version and install the corresponding ChromeDriver
-RUN CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+') && \
-    echo "Chrome version: $CHROME_VERSION" && \
-    CHROME_DRIVER_VERSION=$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION) && \
-    wget -O /tmp/chromedriver.zip "https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip" && \
-    unzip /tmp/chromedriver.zip -d /usr/local/bin/ && \
-    rm /tmp/chromedriver.zip
-
 # Clean up apt cache to reduce image size
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Set the environment variable for ChromeDriver and disable sandbox (required for running in Docker)
-ENV CHROME_BIN=/usr/bin/google-chrome \
-    CHROMEDRIVER=/usr/local/bin/chromedriver \
-    DISPLAY=:99
 
 # Set the ENTRYPOINT to run the standalone binary
 ENTRYPOINT ["python", "-m", "hubitat_lock_manager.api"]
