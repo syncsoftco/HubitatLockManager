@@ -221,13 +221,15 @@ class TestWebdriverBasedComponents(TestCase):
         mock_driver.quit.assert_called_once()
 
     @patch('hubitat_lock_manager.smart_lock.webdriver.Chrome')
-    def test_webdriver_based_code_setter(self, mock_chrome):
+    @patch('hubitat_lock_manager.smart_lock.get_next_position_via_webdriver')
+    def test_webdriver_based_code_setter(self, mock_get_next_position, mock_chrome):
         # Arrange
         config = smart_lock.WebdriverConfig(hub_ip="192.168.1.100", command_executor="")
         mock_driver = Mock()
         mock_chrome.return_value = mock_driver
         mock_form = Mock()
         mock_driver.find_element.return_value = mock_form
+        mock_get_next_position.return_value = 5  # Simulate getting the next position
         
         setter = smart_lock.create_webdriver_based_code_setter(device_id=1, config=config)
 
@@ -236,6 +238,7 @@ class TestWebdriverBasedComponents(TestCase):
 
         # Assert
         self.assertIsInstance(result, smart_lock.SetCodeResult)
+        self.assertEqual(result.position, 5)
         mock_driver.get.assert_called_once_with("http://192.168.1.100/device/edit/1")
         mock_driver.find_element.assert_called_once()
         self.assertEqual(mock_form.find_element.call_count, 3)  # Three input fields
