@@ -3,7 +3,6 @@ from unittest.mock import Mock, patch
 from dataclasses import dataclass
 from typing import List
 
-# Update the import statement to use the correct module
 from hubitat_lock_manager.smart_lock import (
     SmartLock, CreateKeyCodeParams, DeleteKeyCodeParams, LockCode,
     ListKeyCodesResult, CreateKeyCodeResult, DeleteKeyCodeResult,
