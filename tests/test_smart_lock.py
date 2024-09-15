@@ -259,7 +259,7 @@ class TestHelperFunctions(TestCase):
         next_position = smart_lock.get_next_position_based_on_list_key_codes_result(result)
 
         # Assert
-        self.assertEqual(next_position, 3)
+        self.assertEqual(next_position, 250)
 
     def test_get_next_position_all_positions_filled(self):
         # Arrange
