@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify
 
 from hubitat_lock_manager import controller
 
-COMMAND_EXECUTOR = os.getenv("COMMAND_EXECUTOR", "")
+COMMAND_EXECUTOR = os.getenv("SELENIUM_HUB_URL", "")
 HUB_IP = os.getenv("HUB_IP", "192.168.86.37")
 
 app = Flask(__name__)
