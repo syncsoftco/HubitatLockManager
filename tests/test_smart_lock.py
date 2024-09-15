@@ -6,6 +6,7 @@ import time
 
 from hubitat_lock_manager import smart_lock
 
+
 # Fake implementations of the test doubles
 class FakePositionDeleter(smart_lock.PositionDeleter):
     def __init__(self):
