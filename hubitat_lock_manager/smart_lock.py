@@ -123,7 +123,7 @@ class WebdriverConfig:
     device_name_filter: str = "lock"
 
     @staticmethod
-    def create_driver() -> webdriver.Chrome:
+    def create_driver(command_executor: str = "") -> webdriver.Chrome:
         options = webdriver.ChromeOptions()    # ChromeDriver can be sensitive to version changes, so we use these arguments to improve stability
         options.add_argument("start-maximized")  # Start the browser maximized
         options.add_argument("enable-automation")  # Enable automation mode
@@ -131,10 +131,16 @@ class WebdriverConfig:
         options.add_argument("--no-sandbox")  # Bypass OS security model
         options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
         options.add_argument("--disable-browser-side-navigation")  # Avoid errors on page load timeout
-        options.add_argument("--disable-gpu")  # Applicable to windows os only
-        return webdriver.Chrome(
-            service=ChromeService(ChromeDriverManager().install()),
-            options=options,
+
+        if not command_executor:
+            return webdriver.Chrome(
+                service=ChromeService(ChromeDriverManager().install()),
+                options=options,
+            )
+
+        return webdriver.Remote(
+            command_executor=command_executor,
+            options=options
         )
 
 
