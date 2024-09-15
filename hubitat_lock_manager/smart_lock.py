@@ -144,6 +144,7 @@ class WebdriverConfig:
             options=options,
         )
 
+
 def create_generic_z_wave_lock(
     device_id: int,
     position_deleter: PositionDeleter,
