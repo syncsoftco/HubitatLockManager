@@ -124,16 +124,14 @@ class WebdriverConfig:
 
     @staticmethod
     def create_driver() -> webdriver.Chrome:
-        options = webdriver.ChromeOptions()
-        // ChromeDriver is just AWFUL because every version or two it breaks unless you pass cryptic arguments
-        //AGRESSIVE: options.setPageLoadStrategy(PageLoadStrategy.NONE); // https://www.skptricks.com/2018/08/timed-out-receiving-message-from-renderer-selenium.html
-        options.addArguments("start-maximized"); // https://stackoverflow.com/a/26283818/1689770
-        options.addArguments("enable-automation"); // https://stackoverflow.com/a/43840128/1689770
-        options.addArguments("--headless"); // only if you are ACTUALLY running headless
-        options.addArguments("--no-sandbox"); //https://stackoverflow.com/a/50725918/1689770
-        options.addArguments("--disable-dev-shm-usage"); //https://stackoverflow.com/a/50725918/1689770
-        options.addArguments("--disable-browser-side-navigation"); //https://stackoverflow.com/a/49123152/1689770
-        options.addArguments("--disable-gpu"); //https://stackoverflow.com/questions/51959986/how-to-solve-selenium-chromedriver-timed-out-receiving-message-from-renderer-exc
+        options = webdriver.ChromeOptions()    # ChromeDriver can be sensitive to version changes, so we use these arguments to improve stability
+        options.add_argument("start-maximized")  # Start the browser maximized
+        options.add_argument("enable-automation")  # Enable automation mode
+        options.add_argument("--headless")  # Run in headless mode (no GUI)
+        options.add_argument("--no-sandbox")  # Bypass OS security model
+        options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
+        options.add_argument("--disable-browser-side-navigation")  # Avoid errors on page load timeout
+        options.add_argument("--disable-gpu")  # Applicable to windows os only
         return webdriver.Chrome(
             service=ChromeService(ChromeDriverManager().install()),
             options=options,
