@@ -123,7 +123,7 @@ class WebdriverConfig:
     device_name_filter: str = "lock"
 
     @staticmethod
-    def create_driver(command_executor: str = "") -> webdriver.Chrome:
+    def create_driver(command_executor: str = ""):
         options = webdriver.ChromeOptions()    # ChromeDriver can be sensitive to version changes, so we use these arguments to improve stability
         options.add_argument("start-maximized")  # Start the browser maximized
         options.add_argument("enable-automation")  # Enable automation mode
