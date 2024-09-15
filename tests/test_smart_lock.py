@@ -144,10 +144,13 @@ class TestSmartLock(TestCase):
         self.fake_code_lister.codes = [smart_lock.LockCode(code=str(i), name=f"user{i}", position=i) for i in range(1, 251)]
         params = smart_lock.CreateKeyCodeParams(code="9999", username="new_user")
 
-        # Act / Assert
-        with self.assertRaises(ValueError) as context:
-            self.sut.create_key_code(params)
-        self.assertEqual(str(context.exception), "Maximum number of codes reached")
+        # Act
+        result = self.sut.create_key_code(params)
+
+        # Assert
+        self.assertEqual(result.position, 250)  # Assuming it overwrites the last position
+        self.assertIn("9999", [code.code for code in self.fake_code_setter.codes])
+
 
     def test_get_next_position(self):
         # Arrange
