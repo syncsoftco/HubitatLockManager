@@ -124,9 +124,9 @@ class SmartLockProvider:
         return self.smart_lock_factory.list_smart_locks()
 
 
-def create_smart_lock_controller(hub_ip: str) -> SmartLockController:
+def create_smart_lock_controller(hub_ip: str, command_executor: str) -> SmartLockController:
     # Configure how the code will interact with the Hubitat web interface
-    webdriver_config = smart_lock.WebdriverConfig(hub_ip)
+    webdriver_config = smart_lock.WebdriverConfig(hub_ip, command_executor)
 
     # Create a more specific configuration tailored for using a web browser
     config = smart_lock.create_webdriver_smart_lock_config(webdriver_config)
