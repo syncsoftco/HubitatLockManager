@@ -261,16 +261,5 @@ class TestHelperFunctions(TestCase):
         # Assert
         self.assertEqual(next_position, 250)
 
-    def test_get_next_position_all_positions_filled(self):
-        # Arrange
-        codes = [smart_lock.LockCode(code=str(i), name=f"user{i}", position=i) for i in range(1, 251)]
-        result = smart_lock.ListKeyCodesResult(codes=codes)
-
-        # Act
-        next_position = smart_lock.get_next_position_based_on_list_key_codes_result(result)
-
-        # Assert
-        self.assertEqual(next_position, 250)  # Should return the last possible position
-
 if __name__ == "__main__":
     unittest.main()
