@@ -1,31 +1,56 @@
 # Define build argument for the base image tag
 ARG TAG=latest
-
 # Extend from the dynamically tagged base Dockerfile
 FROM syncsoftco/hubitat-lock-manager:${TAG}
 
-# Update apt package list
-RUN apt-get update
-
-# Install necessary packages
-RUN apt-get install -y curl unzip wget apt-transport-https ca-certificates \
-    gnupg --no-install-recommends
-
-# Install Chrome dependencies
-RUN apt-get install -y libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 \
-    libxi6 libxtst6 libnss3 libglib2.0-0 libnss3-dev fonts-liberation --no-install-recommends
+# Update apt package list and install necessary packages
+RUN apt-get update && apt-get install -y \
+    curl \
+    unzip \
+    wget \
+    apt-transport-https \
+    ca-certificates \
+    gnupg \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxi6 \
+    libxtst6 \
+    libnss3 \
+    libglib2.0-0 \
+    libnss3-dev \
+    fonts-liberation \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libxkbcommon0 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Chrome (latest stable version)
-RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
-    apt-get update && \
-    apt-get install -y google-chrome-stable --no-install-recommends
-
-# Clean up apt cache to reduce image size
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set the necessary Chrome options to run in headless mode
 ENV CHROME_FLAGS="--headless --no-sandbox --disable-dev-shm-usage --disable-gpu --remote-debugging-port=9222"
+
+# Create a non-root user to run Chrome
+RUN useradd -m chromeuser
+USER chromeuser
+
+# Set the working directory
+WORKDIR /app
+
+# Copy your application files
+COPY --chown=chromeuser:chromeuser . /app
 
 # Set the ENTRYPOINT to run the standalone binary
 ENTRYPOINT ["python", "-m", "hubitat_lock_manager.api"]
