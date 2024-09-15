@@ -134,7 +134,7 @@ class WebdriverConfig:
 
         if self.command_executor:
             return webdriver.Remote(
-                command_executor=command_executor,
+                command_executor=self.command_executor,
                 options=options
             )
 
