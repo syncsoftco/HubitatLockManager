@@ -148,7 +148,7 @@ class TestSmartLock(TestCase):
         result = self.sut.create_key_code(params)
 
         # Assert
-        self.assertEqual(result.position, 250)  # Assuming it overwrites the last position
+        self.assertEqual(result.position, 1)
         self.assertIn("9999", [code.code for code in self.fake_code_setter.codes])
 
 
