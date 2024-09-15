@@ -10,7 +10,10 @@ COMMAND_EXECUTOR = os.getenv("SELENIUM_EXECUTOR", "")
 HUB_IP = os.getenv("HUB_IP", "192.168.86.37")
 
 app = Flask(__name__)
-smart_lock_controller = controller.create_smart_lock_controller(HUB_IP)
+smart_lock_controller = controller.create_smart_lock_controller(
+    HUB_IP,
+    COMMAND_EXECUTOR,
+)
 
 
 @app.route("/create_key_code", methods=["POST"])
