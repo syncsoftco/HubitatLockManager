@@ -1,5 +1,6 @@
 import unittest
 from unittest import TestCase
+from unittest.mock import patch, Mock
 from typing import List
 import time
 
@@ -67,6 +68,7 @@ class TestSmartLock(TestCase):
         self.assertEqual(result.position, 1)
         self.assertGreater(result.timestamp, 0)
         self.assertIn("1234", [code.code for code in self.fake_code_setter.codes])
+        self.assertEqual(self.fake_code_setter.codes[0].name, "test_user")
 
     def test_create_key_code_duplicate_code(self):
         # Arrange
@@ -137,6 +139,127 @@ class TestSmartLock(TestCase):
         self.assertEqual(result.codes[0].code, "1234")
         self.assertEqual(result.codes[1].code, "5678")
 
+    def test_create_key_code_maximum_codes(self):
+        # Arrange
+        self.fake_code_lister.codes = [smart_lock.LockCode(code=str(i), name=f"user{i}", position=i) for i in range(1, 251)]
+        params = smart_lock.CreateKeyCodeParams(code="9999", username="new_user")
+
+        # Act
+        result = self.sut.create_key_code(params)
+
+        # Assert
+        self.assertEqual(result.position, 1)
+        self.assertIn("9999", [code.code for code in self.fake_code_setter.codes])
+
+
+    def test_get_next_position(self):
+        # Arrange
+        self.fake_code_setter.next_position = 5
+
+        # Act
+        result = self.sut.get_next_position()
+
+        # Assert
+        self.assertEqual(result, 5)
+
+    @patch('time.time')
+    def test_create_key_code_timestamp(self, mock_time):
+        # Arrange
+        mock_time.return_value = 1630000000
+        params = smart_lock.CreateKeyCodeParams(code="1234", username="test_user")
+
+        # Act
+        result = self.sut.create_key_code(params)
+
+        # Assert
+        self.assertEqual(result.timestamp, 1630000000)
+
+class TestWebdriverBasedComponents(TestCase):
+    @patch('hubitat_lock_manager.smart_lock.webdriver.Chrome')
+    def test_webdriver_based_code_deleter(self, mock_chrome):
+        # Arrange
+        config = smart_lock.WebdriverConfig(hub_ip="192.168.1.100", command_executor="")
+        mock_driver = Mock()
+        mock_chrome.return_value = mock_driver
+        mock_form = Mock()
+        mock_driver.find_element.return_value = mock_form
+        
+        deleter = smart_lock.create_webdriver_based_code_deleter(device_id=1, config=config)
+
+        # Act
+        deleter.delete_position(smart_lock.DeletePositionParams(position=1))
+
+        # Assert
+        mock_driver.get.assert_called_once_with("http://192.168.1.100/device/edit/1")
+        mock_driver.find_element.assert_called_once()
+        mock_form.find_element.assert_called_once()
+        mock_form.submit.assert_called_once()
+        mock_driver.quit.assert_called_once()
+
+    @patch('hubitat_lock_manager.smart_lock.webdriver.Chrome')
+    def test_webdriver_based_code_lister(self, mock_chrome):
+        # Arrange
+        config = smart_lock.WebdriverConfig(hub_ip="192.168.1.100", command_executor="")
+        mock_driver = Mock()
+        mock_chrome.return_value = mock_driver
+        mock_element = Mock()
+        mock_element.get_attribute.return_value = '{"1": {"code": "1234", "name": "user1"}}'
+        mock_driver.find_element.return_value = mock_element
+        
+        lister = smart_lock.create_webdriver_based_code_lister(config)
+
+        # Act
+        result = lister.list_codes(device_id=1)
+
+        # Assert
+        self.assertIsInstance(result, smart_lock.ListKeyCodesResult)
+        self.assertEqual(len(result.codes), 1)
+        self.assertEqual(result.codes[0].code, "1234")
+        self.assertEqual(result.codes[0].name, "user1")
+        self.assertEqual(result.codes[0].position, 1)
+        mock_driver.get.assert_called_once_with("http://192.168.1.100/device/edit/1")
+        mock_driver.quit.assert_called_once()
+
+    @patch('hubitat_lock_manager.smart_lock.webdriver.Chrome')
+    @patch('hubitat_lock_manager.smart_lock.get_next_position_via_webdriver')
+    def test_webdriver_based_code_setter(self, mock_get_next_position, mock_chrome):
+        # Arrange
+        config = smart_lock.WebdriverConfig(hub_ip="192.168.1.100", command_executor="")
+        mock_driver = Mock()
+        mock_chrome.return_value = mock_driver
+        mock_form = Mock()
+        mock_driver.find_element.return_value = mock_form
+        mock_get_next_position.return_value = 5  # Simulate getting the next position
+        
+        setter = smart_lock.create_webdriver_based_code_setter(device_id=1, config=config)
+
+        # Act
+        result = setter.set_code(smart_lock.SetCodeParams(code="5678", name="newuser"))
+
+        # Assert
+        self.assertIsInstance(result, smart_lock.SetCodeResult)
+        self.assertEqual(result.position, 5)
+        mock_driver.get.assert_called_once_with("http://192.168.1.100/device/edit/1")
+        mock_driver.find_element.assert_called_once()
+        self.assertEqual(mock_form.find_element.call_count, 3)  # Three input fields
+        mock_form.submit.assert_called_once()
+        mock_driver.quit.assert_called_once()
+
+class TestHelperFunctions(TestCase):
+    def test_get_next_position_based_on_list_key_codes_result(self):
+        # Arrange
+        codes = [
+            smart_lock.LockCode(code="1111", name="user1", position=1),
+            smart_lock.LockCode(code="2222", name="user2", position=2),
+            smart_lock.LockCode(code="3333", name="user3", position=4)
+        ]
+        result = smart_lock.ListKeyCodesResult(codes=codes)
+
+        # Act
+        next_position = smart_lock.get_next_position_based_on_list_key_codes_result(result)
+
+        # Assert
+        self.assertEqual(next_position, 250)
 
 if __name__ == "__main__":
     unittest.main()
